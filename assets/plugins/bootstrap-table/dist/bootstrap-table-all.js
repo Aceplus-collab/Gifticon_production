@@ -3156,6 +3156,7 @@
             var that = this;
 
             $(document).off('keydown').on('keydown', function (e) {
+                alert(1);
                 var $search = that.$toolbar.find('.search input'),
                     $refresh = that.$toolbar.find('button[name="refresh"]'),
                     $toggle = that.$toolbar.find('button[name="toggle"]'),

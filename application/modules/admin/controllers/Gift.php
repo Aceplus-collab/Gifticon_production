@@ -793,7 +793,6 @@ class Gift extends MY_Controller{
             foreach ($category_list as $key => $category) {
                 $row = array();
                 $row['id'] = $key+1;
-
                 $row['username'] = $category['username'];
                 $row['gift_name'] = $category['gift_name'];
                 $row['business_name'] = $category['business_name'];
@@ -834,6 +833,7 @@ class Gift extends MY_Controller{
                 $row['giftto_user_name'] = $category['giftto_user_name'];
 
                 $row['giftfrom_user_name'] = $category['giftfrom_user_name'];
+                $row['currency'] = $category['currency'] ? strtoupper($category['currency']) : '-';
 
                 $data[] = $row;
             }

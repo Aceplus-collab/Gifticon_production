@@ -301,15 +301,19 @@ class User_model extends CI_Model
     {
         $this->db->select("tbl_purchases.*,tbl_purchases.id as purchase_id");
         $this->db->from('tbl_purchases');
-        $this->db->where(" ((user_id = '".$user_id."' OR `giftto_user_id` = '".$user_id."') AND `is_redeem` = 0 AND gift_from_user_id != '".$user_id."' ) OR (id IN(SELECT purchase_id FROM tbl_purchases_swap WHERE user_id= '".$user_id."' AND move_to = 'mygiftbox') )  ORDER BY last_update desc");    
+	$this->db->where(" ((user_id = '".$user_id."' OR `giftto_user_id` = '".$user_id."') AND (`wincube_ctr_id` = '".NULL."') AND `is_redeem` = 0 AND gift_from_user_id != '".$user_id."' ) OR (id IN(SELECT purchase_id FROM tbl_purchases_swap WHERE user_id= '".$user_id."' AND move_to = 'mygiftbox') )  ORDER BY last_update desc");    
         $query = $this->db->get();
         if($query->num_rows() >= 1)
         {
             $pid = array();
             $purchase = $query->result_array();
             foreach ($purchase as $key => $value) {
-                $pid[] = $value['purchase_id'];
-            }
+		    $pid[] = $value['purchase_id'];
+		    //if(!($value['wincube_ctr_id'] == null && $value['giftto_user_id'] == $user_id)){
+		    //$pid[] = $value['purchase_id'];	
+		    //}
+	    }
+	    
 
             $pids = implode(',', $pid);
             return $pids;

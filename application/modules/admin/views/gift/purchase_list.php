@@ -81,6 +81,7 @@
                                                             
                                                             <th  data-field="gifticon_type" data-sortable="true" class="text-center"> Gifticon Type </th>
                                                             <th  data-field="giftcard_format" data-sortable="true" class="text-center"> Giftcard format </th>
+                                                            <th  data-field="currency" data-sortable="false" class="text-center"> Currency </th>
                                                             <th  data-field="price" data-sortable="true" class="text-center"> Price </th>
                                                             <th  data-field="normal_price" data-sortable="true" class="text-center"> Normal Price </th>
                                                             <th  data-field="coupon_discount_amount" data-sortable="true" class="text-center"> Coupon Amount </th>

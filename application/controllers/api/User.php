@@ -140,7 +140,52 @@ class User extends REST_Controller
             $message = ['code' => '0','message' => (string)$fields_validation[0]];
             $this->response($message, REST_Controller::HTTP_OK);
         }
-    }   
+    }
+
+    function deviceInformation_post()
+    {
+        extract($this->input->post());
+        if(!isset($user_id) || $user_id == "" || !isset($device_id) || $device_id == "" || !isset($device_type) || $device_type == "" || !isset($device_os) || $device_os == "" || !isset($device_model) || $device_model == "" || !isset($app_version) || $app_version == "")
+        {
+            $message = ['code' => '0','message' => 'Invalid Parameters'];
+            $this->response($message, REST_Controller::HTTP_OK);  
+        }
+        $user_data=$this->db->get_where("tbl_user",array('id'=>$user_id))->row_array();
+        
+        if((isset($device_id) && $device_id!="") && (isset($device_type) && $device_type!=""))
+        {
+            $data['device_id']=$device_id;
+            $data['device_type']=$device_type;
+        }
+
+        if((isset($device_os) && $device_os!=""))
+        {
+            $data['device_os'] = $device_os;
+        }
+
+        if((isset($device_model) && $device_model!=""))
+        {
+            $data['device_model'] = $device_model;
+        }
+
+        if((isset($app_version) && $app_version!=""))
+        {
+            $data['app_version'] = $app_version;
+        }
+        if($user_data)
+        {
+            $this->db->update('tbl_user',$data,array("id"=>$user_data['id']));
+            $user_data=$this->User_model->get_user($user_data['id']);
+            
+            $message = ['code' => '1','message' =>"Token refresh successfully!","data"=>$user_data];
+            $this->response($message, REST_Controller::HTTP_OK);  
+        }
+        else
+        {
+            $message = ['code' => '0','message' => "Invaild user!"];
+            $this->response($message, REST_Controller::HTTP_OK);        
+        }
+    }
 
     function login_post()
 	{
@@ -591,6 +636,9 @@ class User extends REST_Controller
         $this->db->order_by("tbl_gifticons.sequence ASC");
         $this->db->limit($this->per_page, (($product_page-1) * $this->per_page));
         $query = $this->db->get();
+        //exchange rate
+        $exchange_rate = $this->db->get_where('tbl_exchange_rate',array('ex_country'=>'KRW'))->row_array();
+        //exchange rate
         if($query->num_rows() >= 1)
         {
             $products = $query->result_array();
@@ -608,6 +656,11 @@ class User extends REST_Controller
                 $products[$pkey]['gift_size'] = $gift_size;
                 $products[$pkey]['qry_remaining'] = $this->User_model->qtyRemaing($pvalue['id']);
                 $products[$pkey]['business'] = $this->User_model->get_business($pvalue['business_id']);
+                if($pvalue['wincube_id'] != null && isset($isWon) && $isWon == "false")
+                {
+                    $products[$pkey]['normal_price'] = round((double)$pvalue['normal_price'] / (double)$exchange_rate['rate'], 2);
+                    $products[$pkey]['coupon_price'] = round((double)$pvalue['coupon_price'] / (double)$exchange_rate['rate'], 2);
+                }
             }
         } 
 
@@ -689,6 +742,9 @@ class User extends REST_Controller
         $this->db->order_by("tbl_gifticons.sequence ASC");
         $this->db->limit($this->per_page, (($product_page-1) * $this->per_page));
         $query = $this->db->get();
+        //exchange rate
+        $exchange_rate = $this->db->get_where('tbl_exchange_rate',array('ex_country'=>'KRW'))->row_array();
+        //exchange rate
         if($query->num_rows() >= 1)
         {
             $products = $query->result_array();
@@ -709,6 +765,12 @@ class User extends REST_Controller
                 $products[$pkey]['qry_remaining'] = $this->User_model->qtyRemaing($pvalue['id']);
 
                 $products[$pkey]['business'] = $this->User_model->get_business($pvalue['business_id']);
+
+                if($pvalue['wincube_id'] != null && isset($isWon) && $isWon == "false")
+                {
+                    $products[$pkey]['normal_price'] = round((double)$pvalue['normal_price'] / (double)$exchange_rate['rate'], 2);
+                    $products[$pkey]['coupon_price'] = round((double)$pvalue['coupon_price'] / (double)$exchange_rate['rate'], 2);
+                }
             }
 		}
 
@@ -916,6 +978,9 @@ class User extends REST_Controller
         $this->db->where('tbl_gifticons.id',$product_id);
         $this->db->where("tbl_gifticons.is_active = 1 AND tbl_gifticons.is_delete = 0");
         $query = $this->db->get();
+        //exchange rate
+        $exchange_rate = $this->db->get_where('tbl_exchange_rate',array('ex_country'=>'KRW'))->row_array();
+        //exchange rate
         if($query->num_rows() >= 1)
         {
             $products = $query->row_array();
@@ -950,6 +1015,12 @@ class User extends REST_Controller
             }
 
             $products['qry_remaining'] = $qty;
+            // if($products['wincube_id'] != null)
+            if($products['wincube_id'] != null && isset($isWon) && $isWon == "false")
+            {
+                $products['normal_price'] = round((double)$products['normal_price'] / (double)$exchange_rate['rate'], 2);
+                $products['coupon_price'] = round((double)$products['coupon_price'] / (double)$exchange_rate['rate'], 2);
+            }
 
             $product_images = $this->db->get_where('tbl_gifticon_images',array('gifticon_id'=>$product_id))->result_array();
 
@@ -974,7 +1045,6 @@ class User extends REST_Controller
 
     function purchased_post()
     {
-        
         extract($this->input->post());
         if(!isset($user_id) || $user_id == "" || $stripe_charge_token == "" || $transaction_token == "" || $price == "" || $fees == "" || $total_price == "" || $metadata == "")
         {
@@ -986,6 +1056,10 @@ class User extends REST_Controller
         $mdata = $allpostdata['metadata'];
         //unset($allpostdata['metadata']);
         unset($allpostdata['coupon_code']);
+        if(isset($allpostdata['currency']))
+        {
+            unset($allpostdata['currency']);
+        }
         $this->db->insert('tbl_transaction',$allpostdata);
         $transaction_id = $this->db->insert_id();
         unset($allpostdata['coupon_discount_amount']);
@@ -1042,6 +1116,11 @@ class User extends REST_Controller
                         "qty"=>$loopvalue['qty']
                     );
 
+                    if(isset($currency) && $currency != "")
+                    {
+                       $param['currency'] = $currency;
+                    }
+
                     if(isset($loopvalue['size']) && $loopvalue['size'] != "")
                     {
                         $param['size'] = $loopvalue['size'];
@@ -1061,7 +1140,7 @@ class User extends REST_Controller
                     {
                         $param['giftcard_id'] = $giftdetails['giftcard_id'];
                     }
-
+                    // $param['currency'] = 'usds';
                     // here i need to update moveto
 
                    // $param['move_to'] = 'mygiftbox';
@@ -1186,10 +1265,10 @@ class User extends REST_Controller
 
             $UserDetails = $this->db->get_where('tbl_user',array('id'=>$user_id))->row_array();
 
-            $msgpush = array("body"=>$NotiMessage,'title'=>$NotiMessage,"tag"=>'receipt',"type"=>'receipt');
+            $msgpush = array("body"=>$NotiMessage,'title'=>$NotiMessage,"tag"=>'receipt',"type"=>'receipt', 'currency' => isset($currency) ? $currency : NULL);
 
             $body = array(); 
-            $bodyI['aps'] = array('sound'=>'default', 'alert' => array('title'=>'Receipt','body'=>$NotiMessage),"tag"=>'receipt');
+            $bodyI['aps'] = array('sound'=>'default', 'alert' => array('title'=>'Receipt','body'=>$NotiMessage),"tag"=>'receipt', 'currency' => isset($currency) ? $currency : NULL);
 
             if($UserDetails['device_type']=='A' && $UserDetails['device_id']!='')
             {
@@ -1484,6 +1563,12 @@ class User extends REST_Controller
                             'redeem_date' => date_format(date_create($status['SwapDt']), 'Y-m-d H:i:s')
                         ], ['id' => $item['id']]);
                     }
+                    // unset($purchase[$k]);
+                }
+                $isKItem = $this->db->get_where('tbl_gifticons',array('id'=>$purchase[$k]['gifticon_id']))->row_array();
+
+                if($isKItem['wincube_id'] != NULL)
+                {
                     unset($purchase[$k]);
                 }
             }
@@ -1556,12 +1641,12 @@ class User extends REST_Controller
         if($removeIDS != '')
         {
             $condition = " `id` NOT IN (".$removeIDS.") AND ";
-        }
+	}
 
         $this->db->select("tbl_purchases.*,tbl_purchases.id as purchase_id");
 		$this->db->from('tbl_purchases'); 
 		
-        $this->db->where(" ".$condition." ( (user_id = '".$user_id."' AND `is_redeem` = 1) OR (`giftto_user_id` = '".$user_id."' AND `is_redeem` = 1 ) OR ( `gift_from_user_id` = '".$user_id."' ) ) OR ( id IN(SELECT purchase_id FROM tbl_purchases_swap WHERE user_id= '".$user_id."' AND move_to = 'used_sent') )  ORDER BY last_update desc LIMIT ".(($page-1) * $this->per_page).",".$this->per_page."  ");
+        $this->db->where(" ".$condition." ( (user_id = '".$user_id."' AND `is_redeem` = 1) OR (`giftto_user_id` = '".$user_id."' AND `is_redeem` = 0) OR (user_id = '".$user_id."' OR `gift_from_user_id` = '".$user_id."') OR (`giftto_user_id` = '".$user_id."' AND `is_redeem` = 1 ) OR ( `gift_from_user_id` = '".$user_id."' OR  user_id = '".$user_id."' AND `is_redeem` = 0) ) OR ( id IN(SELECT purchase_id FROM tbl_purchases_swap WHERE user_id= '".$user_id."' AND move_to = 'used_sent') )  ORDER BY last_update desc LIMIT ".(($page-1) * $this->per_page).",".$this->per_page."  ");
 
         //$this->db->where(" (user_id = '".$user_id."' AND `is_redeem` = 1) OR (`giftto_user_id` = '".$user_id."' AND `is_redeem` = 1 ) OR ( `gift_from_user_id` = '".$user_id."' ) AND (purchaser = 'used_sent' OR receiver = 'used_sent') AND (move_to IS NOT NULL OR move_to = 'used_sent' )  ORDER BY last_update desc LIMIT ".(($page-1) * $this->per_page).",".$this->per_page."  "); 
 
@@ -1570,8 +1655,26 @@ class User extends REST_Controller
 		{
 			$purchase = $query->result_array();
 
-			foreach ($purchase as $key => $value) {
+             foreach($purchase as $k => $v)
+             {
+                 $isKItem = $this->db->get_where('tbl_gifticons',array('id'=>$purchase[$k]['gifticon_id']))->row_array();
 
+                 if($isKItem['wincube_id'] == NULL)
+                 {
+                     if($purchase[$k]['is_redeem'] == 0 && ($purchase[$k]['giftto_user_id'] == $user_id && $purchase[$k]['move_to'] != 'used_sent'))
+                     {
+                       unset($purchase[$k]);
+		     }
+		     else if($purchase[$k]['user_id'] == $user_id && $purchase[$k]['giftto_user_id'] == 0 && $purchase[$k]['gift_from_user_id'] == 0 && $purchase[$k]['move_to'] != 'used_sent')
+		     {
+		     	unset($purchase[$k]);
+		     }
+                 }
+	     }
+
+		 $purchase = array_values($purchase);
+
+			foreach ($purchase as $key => $value) {
 				$purchase[$key]['gifticons'] = $this->User_model->getGift($value['gifticon_id']);
 
 				if($user_id == $value['user_id'])
@@ -1957,6 +2060,7 @@ class User extends REST_Controller
                 if(!empty($purchasedata[0]['transaction']))
                 {
                     $noti[$key]['transaction_data'] = $purchasedata[0]['transaction'];    
+                    $noti[$key]['currency'] = $purchasedata[0]['currency'];    
                 }else{
                     $noti[$key]['transaction_data'] = (object) array();
                 }

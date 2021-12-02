@@ -21,6 +21,10 @@
                                 <a href="<?php echo base_url(); ?>admin/gift/listing" class="waves-effect <?php echo ($page=='gift')? 'active':'';?>"><i class="glyphicon glyphicon-gift"></i> <span> Gifticons </span> </a>
                             </li>
 
+                            <li class="">
+                                <a href="<?php echo base_url(); ?>admin/purchase/listing" class="waves-effect <?php echo ($page=='purchase')? 'active':'';?>"><i class="glyphicon glyphicon-usd"></i> <span> Purchases </span> </a>
+                            </li>
+
                             <li class="has_sub">
                                 <a href="#" class="waves-effect <?php if(isset($page_sname)) { echo ($page_sname=='cms')? 'active':''; } ?>"><i class="glyphicon glyphicon-cog"></i> <span> CMS Pages </span> </a>
                                 <ul class="list-unstyled">

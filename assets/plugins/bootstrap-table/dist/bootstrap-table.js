@@ -166,6 +166,9 @@
     };
 
     BootstrapTable.DEFAULTS = {
+        filterFromDate: false,
+        filterToDate: false,
+        filterCountry: false,
         classes: 'table table-hover',
         height: undefined,
         undefinedText: '-',
@@ -176,6 +179,7 @@
         data: [],
         method: 'get',
         url: undefined,
+        countryListUrl: undefined,
         ajax: undefined,
         cache: true,
         contentType: 'application/json',
@@ -230,6 +234,9 @@
         maintainSelected: false,
         searchTimeOut: 500,
         searchText: '',
+        fromDate: '',
+        toDate: '',
+        country: '',
         iconSize: undefined,
         iconsPrefix: 'glyphicon', // glyphicon of fa (font awesome)
         icons: {
@@ -779,6 +786,9 @@
             timeoutId = 0,
             $keepOpen,
             $search,
+            $fromDate,
+            $toDate,
+            $country,
             switchableCount = 0;
 
         this.$toolbar.html('');
@@ -916,8 +926,137 @@
                 }, that.options.searchTimeOut);
             }
         }
+
+        if(this.options.filterToDate) {
+            html = [];
+            html.push(
+                '<div class="pull-' + this.options.searchAlign + ' filter-date to-date">',
+                '<span class="prefix-name">To</span>',
+                    sprintf('<input class="form-control' + (this.options.iconSize === undefined ? '' : ' input-' + this.options.iconSize) + '" type="date" placeholder="%s">',
+                        this.options.formatSearch()),
+                '</div>');
+
+            this.$toolbar.append(html.join(''));
+            $toDate = this.$toolbar.find('.to-date input');
+            $toDate.on('change', function (event) {
+                clearTimeout(timeoutId); // doesn't matter if it's 0
+                timeoutId = setTimeout(function () {
+                    that.onToDate(event);
+                }, that.options.searchTimeOut);
+            });
+        }
+
+        if(this.options.filterFromDate) {
+            html = [];
+            html.push(
+                '<div class="pull-' + this.options.searchAlign + ' filter-date from-date">',
+                '<span class="prefix-name">From</span>',
+                    sprintf('<input class="form-control' + (this.options.iconSize === undefined ? '' : ' input-' + this.options.iconSize) + '" type="date" placeholder="%s">',
+                        this.options.formatSearch()),
+                '</div>');
+
+            this.$toolbar.append(html.join(''));
+            $fromDate = this.$toolbar.find('.from-date input');
+            $fromDate.on('change', function (event) {
+                clearTimeout(timeoutId); // doesn't matter if it's 0
+                timeoutId = setTimeout(function () {
+                    that.onFromDate(event);
+                }, that.options.searchTimeOut);
+            });
+        }
+
+        if(this.options.filterCountry) {
+            html = [];
+            html.push(
+                '<div class="pull-' + this.options.searchAlign + ' filter-date country">',
+                '<span class="prefix-name">Country</span>',
+                '<select class="custom-select" id="country-list-select">',
+                '<option selected value="">Choose...</option>',
+                '<option value="1">New Zealand</option>',
+                '<option value="2">Australia</option>',
+                '<option value="3">Korea</option>',
+                '</select>',
+                '</div>');
+
+            this.$toolbar.append(html.join(''));
+            $country = this.$toolbar.find('.country select');
+            $country.on('change', function (event) {
+                clearTimeout(timeoutId); // doesn't matter if it's 0
+                timeoutId = setTimeout(function () {
+                    that.onCountry(event);
+                }, that.options.searchTimeOut);
+            });
+            $.ajax({
+                type:"GET",
+                url:this.options.countryListUrl,
+                success:function(data){
+                    let jsonData = JSON.parse(data)
+                    let options = [];
+                    for (const [key, value] of Object.entries(jsonData)) {
+                        options.push(`<option value="${value.id}">${value.name}</option>`)
+                    }
+                    $('<select id="country-list-select"/>').append(options.join(''));
+                }
+            });
+        }
+        
     };
 
+    BootstrapTable.prototype.onCountry = function (event) {
+        var text = $.trim($(event.currentTarget).val());
+
+        // trim search input
+        if (this.options.trimOnSearch && $(event.currentTarget).val() !== text) {
+            $(event.currentTarget).val(text);
+        }
+
+        if (text === this.country) {
+            return;
+        }
+        this.country = text;
+
+        this.options.pageNumber = 1;
+        this.initSearch();
+        this.updatePagination();
+        this.trigger('country', text);
+    };
+    BootstrapTable.prototype.onToDate = function (event) {
+        var text = $.trim($(event.currentTarget).val());
+
+        // trim search input
+        if (this.options.trimOnSearch && $(event.currentTarget).val() !== text) {
+            $(event.currentTarget).val(text);
+        }
+
+        if (text === this.toDate) {
+            return;
+        }
+        this.toDate = text;
+
+        this.options.pageNumber = 1;
+        this.initSearch();
+        this.updatePagination();
+        this.trigger('toDate', text);
+    };
+    BootstrapTable.prototype.onFromDate = function (event) {
+        var text = $.trim($(event.currentTarget).val());
+
+        // trim search input
+        if (this.options.trimOnSearch && $(event.currentTarget).val() !== text) {
+            $(event.currentTarget).val(text);
+        }
+
+        if (text === this.fromDate) {
+            return;
+        }
+        this.fromDate = text;
+
+        this.options.pageNumber = 1;
+        this.initSearch();
+        this.updatePagination();
+        this.trigger('fromDate', text);
+    };
+    
     BootstrapTable.prototype.onSearch = function (event) {
         var text = $.trim($(event.currentTarget).val());
 
@@ -1513,6 +1652,9 @@
                     this.options.totalRows : this.options.pageSize,
                 pageNumber: this.options.pageNumber,
                 searchText: this.searchText,
+                fromDate: this.fromDate,
+                toDate: this.toDate,
+                country: this.country,
                 sortName: this.options.sortName,
                 sortOrder: this.options.sortOrder
             },
@@ -1525,6 +1667,9 @@
         if (this.options.queryParamsType === 'limit') {
             params = {
                 search: params.searchText,
+                fromDate: params.fromDate,
+                toDate: params.toDate,
+                country: params.country,
                 sort: params.sortName,
                 order: params.sortOrder
             };
@@ -1541,7 +1686,6 @@
         }
 
         data = calculateObjectValue(this.options, this.options.queryParams, [params], data);
-
         $.extend(data, query || {});
 
         // false to stop request

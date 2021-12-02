@@ -1,0 +1,55 @@
+.pull-right.filter-date{
+    display: flex !important;
+    margin-right: 4px;
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    line-height: 34px;
+}
+.pull-right.filter-date .prefix-name{
+    background: #ebeff2;
+    color: black;
+    padding: 2px 11px;
+    font-weight: bold;
+    font-size: 12px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+.pull-right.filter-date input{
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    width: 162px;
+}
+.pull-right.search input{
+    width: 138px;
+}
+.pull-right.filter-date select{
+    border: 1px solid #e3e3e3;
+    background: white;
+    padding-right: 30px;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    width: 117px;
+}
+.pull-left .excel_export_btn{
+    background-color: #7266ba !important;
+}
+.pull-left .excel_export_btn i{
+    margin-right: 8px;
+}
+.cancel-voucher-excel-btn{
+    background: #ff3232;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    padding: 3px 16px;
+}
+.recancel-voucher-excel-btn{
+    background: green;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    padding: 3px 16px;
+}
