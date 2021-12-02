@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<title>Gifticon Application</title> 
+	<style type="text/css"> 
+		body
+		{
+			margin: 0;
+			padding: 0;
+			background: white no-repeat left top;
+		}
+
+		#main
+		{
+			width: -moz-min-content;
+			margin: 10px;
+			background: white;
+			-moz-border-radius: 8px;
+			-webkit-border-radius: 8px;
+			padding: 30px;
+			border: 1px solid #adaa9f;
+			-moz-box-shadow: 0 2px 2px #9c9c9c;
+			-webkit-box-shadow: 0 2px 2px #9c9c9c;
+		}
+
+		/*Features table------------------------------------------------------------*/
+		.features-table
+		{
+			width: 100%;
+			margin: 0 auto;
+			border-collapse: separate;
+			border-spacing: 0;
+			text-shadow: 0 1px 0 #fff;
+			color: #2a2a2a;
+			background: #fafafa;  
+			background-image: -moz-linear-gradient(top, #fff, #eaeaea, #fff); /* Firefox 3.6 */
+			background-image: -webkit-gradient(linear,center bottom,center top,from(#fff),color-stop(0.5, #eaeaea),to(#fff)); 
+		}
+
+		.features-table td
+		{
+			height: 50px;
+			line-height: 50px;
+			padding: 0 20px;
+			border-bottom: 1px solid #cdcdcd;
+			box-shadow: 0 1px 0 white;
+			-moz-box-shadow: 0 1px 0 white;
+			-webkit-box-shadow: 0 1px 0 white;
+			white-space: nowrap;
+			text-align: center;
+
+		}
+
+		.features-table tbody td
+		{
+			text-align: center;
+			font: normal 12px Verdana, Arial, Helvetica;
+			width: auto;
+		}
+
+		.features-table tbody td:first-child
+		{
+			width: auto;
+			text-align: left;
+
+		}
+
+		.features-table td:nth-child(3), .features-table td:nth-child(5)
+		{
+			background: #efefef;
+			background: rgba(144,144,144,0.15);
+			border-right: 1px solid white;
+
+		}
+
+		.features-table td:nth-child(4), .features-table td:nth-child(8), .features-table td:nth-child(6), .features-table td:nth-child(1)
+		{
+			background: #e7f3d4;  
+			background: rgba(184,243,85,0.3);
+		}
+
+		/*Header*/
+		.features-table thead td
+		{
+			font: bold 1.3em 'trebuchet MS', 'Lucida Sans', Arial;  
+			-moz-border-radius-topright: 10px;
+			-moz-border-radius-topleft: 10px; 
+			border-top-right-radius: 10px;
+			border-top-left-radius: 10px;
+			border-top: 1px solid #eaeaea; 
+		}
+
+		.features-table thead td:first-child
+		{
+			border-top: none;
+		}
+
+		/*Footer*/
+		.features-table tfoot td
+		{
+			font: bold 1.4em Georgia;  
+			-moz-border-radius-bottomright: 10px;
+			-moz-border-radius-bottomleft: 10px; 
+			border-bottom-right-radius: 10px;
+			border-bottom-left-radius: 10px;
+			border-bottom: 1px solid #dadada;
+		}
+
+		.features-table tfoot td:first-child
+		{
+			border-bottom: none;
+		}
+	</style> 
+</head>
+<body>
+	<div id="main">
+
+		
+		<!-- <span>User List :: <a href="http://52.11.42.113/User_list/listing">User List</a></span> -->
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<br>
+		<hr>
+		<span>Base URL :: 35.158.248.75/gifticon/api/</span><br>
+		<hr>
+		<span>User List :: <a target="_blank" href="35.158.248.75/gifticon/listing/user"> 35.158.248.75/gifticon/listing/user  </a> </span><br>
+		<hr>
+		
+		
+		<span>Key 256 ::  jO5B2xmkipp6loeZG1rGuuVCFWWpEOqb </span><br>
+
+		<span>IV ::  jO5B2xmkipp6loeZ </span><br>		
+		<!-- <span>User List : <a href="http://hyperlinkinfosystem.in/mydoctor/User_list/listing"><b>CLICK HERE</b></a></span> -->
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<br>
+		<hr>
+		<span>Header Authentication <br>Header key:: <b>API-KEY</b> <br>Header Value: <b>gifticon</b></span>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+		<!-- <span>Accept-Language :<b> english/arabic [Note:If don't pass any content-language the Default is english] </b></span> -->
+		<br>
+		<hr>
+		
+		<span>Header Token <br>Header key:: <b>TOKEN</b> <br>Header Value: <b>user token</b></span>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
+		<br/><br/>
+
+		<span>
+			<b>NOTE : When you get <font color="red" > UNAUTHORIZED(401) </font> status code from server Then logout user forcefully </b>
+		</span>
+		<!-- <h2>Bhul chuk Maaf</h2> -->
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
+		<br/><br/>
+		<table class="features-table">
+			<thead>
+				<tr>
+					<td>No</td>
+					<td>URL</td>
+					<td>Method</td>				
+					<td>Mandatory Parameter</td>
+					<td>Optional Parameter</td>
+					<td>Response Code</td>
+					<td>Notes</td>					
+				</tr>
+			</thead>				 				
+			<tbody>	
+				<tr>
+					<td  colspan="50" style="text-align: center;font-size: 2em;" colspan="7">
+						<b>
+							USER API
+						</b>
+					</td>
+				</tr>
+				<tr >
+					<td>1</td>
+					<td>user/signup/</td>
+					<td>POST</td>
+					<td>name,username,email,password,device_id,device_type,signup_type['S' OR 'A' OR 'G' OR 'F']</td>
+					<td>profile_image,lat,lng,hear_about_us,username,language,social_id,password,dob["Y-m-d format only"],country</td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0</b>
+					</td>
+					<td>This api is used to signup user</td>
+				</tr>
+				<tr >
+					<td>2</td>
+					<td>user/checkSocial</td>
+					<td>POST</td>
+					<td>social_id</td>
+					<td></td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0</b>
+					</td>
+					<td>This api is used to signup user</td>
+				</tr>
+				<tr >
+					<td>4</td>
+					<td>user/updateProfile/</td>
+					<td>POST</td>
+					<td>user_id</td>
+					<td>step['dob', 'phone', 'hear_country', 'done'],name,email,password,device_id,device_type,dob["Y-m-d format only"],country,country_code,phone,profile_image,lat,lng,hear_about_us,username,language,social_id,password</td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0</b>
+					</td>
+					<td>This api is used to update your profile</td>
+				</tr>
+				<tr >
+					<td>5</td>
+					<td>user/login/</td>
+					<td>POST</td>
+					<td>email,password</td>
+					<td>device_id,device_type,lat,lng</td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0,3</b>
+					</td>
+					<td>This api is used to login</td>
+				</tr>
+				<tr >
+					<td>6</td>
+					<td>user/forgot_password</td>
+					<td>POST</td>
+					<td>email</td>
+					<td></td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0,2</b>
+					</td>
+					<td>This api is used for forgotpassword</td>
+				</tr>
+				<tr >
+					<td>7</td>
+					<td>user/changePassword</td>
+					<td>POST</td>
+					<td>user_id,old_password,new_password</td>
+					<td>profile_image,language</td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0,2</b>
+					</td>
+					<td>This api is used to change password</td>
+				</tr>
+				<tr >
+					<td>8</td>
+					<td>user/getProfile/</td>
+					<td>POST</td>
+					<td>user_id</td>
+					<td></td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0,2</b>
+					</td>
+					<td>This api is used to get user profile</td>
+				</tr>
+				<tr >
+					<td>11</td>
+					<td>user/logout/</td>
+					<td>POST</td>
+					<td>user_id</td>
+					<td></td>
+					<td>HTTP Code: OK (200)<br>
+						<b>Code : 1,0,2</b>
+					</td>
+					<td>This api is used to logout</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div>
+	<table class="features-table">
+				<thead>					
+					<tr>
+						<td>No</td>
+						<td>CODE</td>
+						<td>Message</td>			
+					</tr>
+				</thead>				 				
+				<tbody>
+					<tr>
+						<td colspan="3" align="center" style="text-align:center;">HTTP CODE 200</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>0</td>
+						<td>Invalid Request / Failer Request </td>
+					</tr>
+
+					<tr>
+						<td>2</td>
+						<td>1</td>
+						<td>Success Response</td>
+					</tr>
+
+					<tr>
+						<td>3</td>
+						<td>2</td>
+						<td>No Data Found</td>
+					</tr>
+
+					<tr>
+						<td>4</td>
+						<td>3</td>
+						<td>Account Inactive(block)</td>
+					</tr>
+
+					<tr>
+						<td>5</td>
+						<td>4</td>
+						<td>OTP verification</td>
+					</tr>
+
+					<tr>
+						<td>6</td>
+						<td>5</td>
+						<td>Email Verification</td>
+					</tr>
+
+					<tr>
+						<td>7</td>
+						<td>6</td>
+						<td>Force Update App</td>
+					</tr>
+
+					<tr>
+						<td>8</td>
+						<td>7</td>
+						<td>Simaple update App alert</td>
+					</tr>
+
+					<tr>
+						<td colspan="3" align="center" style="text-align:left;">
+							<br/><br/>Response : {"code":"1","message":"Enter Message","data":""} <br/><br/>
+						</td>
+					</tr>
+
+					<tr>
+						<td colspan="3" align="center" style="text-align:center;">HTTP CODE 401</td>
+					</tr>
+				</tbody>
+		</table>
+	</div>
+</body>
+</html>
