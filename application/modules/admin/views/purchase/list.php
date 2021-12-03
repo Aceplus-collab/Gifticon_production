@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="p-20">
                                             <div class="table-responsive">
-                                                <button class="exchange_rate">Exchange Rate Test</button>
+                                                <!-- <button class="exchange_rate">Exchange Rate Test</button> -->
                                                 <div id="toolbar">
                                                     <a href="#" class="excel_export_btn btn btn-default waves-effect waves-light">
                                                     <i class="fa fa-file"></i>    
