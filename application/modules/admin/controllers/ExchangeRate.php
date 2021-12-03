@@ -13,10 +13,11 @@ class ExchangeRate extends CI_Controller{
         $res = $client->request('GET', EXCHANGE_RATE_API);
         $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
         $goods = json_decode($body, true);
+        $currentTime = date('Y-m-d h:i:s');
         $this->db->truncate('tbl_exchange_rate'); 
         foreach($goods['conversion_rates'] as $key => $val)
         {
-            $this->db->insert('tbl_exchange_rate',array('ex_country'=>$key,'rate'=>$val));
+            $this->db->insert('tbl_exchange_rate',array('ex_country'=>$key,'rate'=>$val, 'update_date' => $currentTime));
         }
     }
 

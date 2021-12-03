@@ -107,3 +107,4 @@ defined('OCCASION_IMAGE')	OR define('OCCASION_IMAGE','https://gnew.s3-eu-west-1.
 
 // defined('WINCUBE_API_BASE')	OR define('WINCUBE_API_BASE','http://dev.giftting.co.kr:8084/media/');
 defined('WINCUBE_API_BASE')	OR define('WINCUBE_API_BASE','https://gw.giftting.co.kr:4431/media/');
+defined('EXCHANGE_RATE_API')	OR define('EXCHANGE_RATE_API','https://v6.exchangerate-api.com/v6/3311b500309e3f6d4bff70e8/latest/USD');

@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="p-20">
                                             <div class="table-responsive">
-                                                <!-- <button class="exchange_rate">Exchange Rate Test</button> -->
+                                                <button class="exchange_rate">Exchange Rate Test</button>
                                                 <div id="toolbar">
                                                     <a href="#" class="excel_export_btn btn btn-default waves-effect waves-light">
                                                     <i class="fa fa-file"></i>    
@@ -189,28 +189,28 @@
                         }
                     });
                 })
-                // $(document).on("click",".recancel-voucher-excel-btn", function () {
-                //     $('.alert_div').empty()
-                //     let _that = $(this);
-                //     let wincube_id = $(this).attr('data-wincube-id');
-                //     let purchase_id = $(this).attr('data-purchase-id');
-                //     $.ajax({
-                //         type:"POST",
-                //         url:"<?php echo base_url();?>admin/purchase/ajax_voucher_recancel",
-                //         data: {"wincube_id": wincube_id, "purchase_id":purchase_id},
-                //         success:function(data){
-                //             let res = JSON.parse(data);
-                //             if(res['success'])
-                //             {
-                //                 $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>')
-                //             }
-                //             _that.text('Cancel Voucher');
-                //             _that.parent('.action-btn').prev('.voucher-status').find('span').text("--");
-                //             _that.removeClass('recancel-voucher-excel-btn');
-                //             _that.addClass('cancel-voucher-excel-btn');
-                //         }
-                //     });
-                // });
+                $(document).on("click",".recancel-voucher-excel-btn", function () {
+                    $('.alert_div').empty()
+                    let _that = $(this);
+                    let wincube_id = $(this).attr('data-wincube-id');
+                    let purchase_id = $(this).attr('data-purchase-id');
+                    $.ajax({
+                        type:"POST",
+                        url:"<?php echo base_url();?>admin/purchase/ajax_voucher_recancel",
+                        data: {"wincube_id": wincube_id, "purchase_id":purchase_id},
+                        success:function(data){
+                            let res = JSON.parse(data);
+                            if(res['success'])
+                            {
+                                $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>')
+                            }
+                            _that.text('Cancel Voucher');
+                            _that.parent('.action-btn').prev('.voucher-status').find('span').text("--");
+                            _that.removeClass('recancel-voucher-excel-btn');
+                            _that.addClass('cancel-voucher-excel-btn');
+                        }
+                    });
+                });
             });
         </script>
         
