@@ -2436,11 +2436,10 @@ class User extends REST_Controller
                 if($gift['wincube_id'] != null)
                 {
                     $client = new GuzzleHttp\Client();
-                    $gifticon = $this->User_model->qtyRemaing($loopvalue['gift_id']);
                     $res = $client->request('POST', WINCUBE_API_BASE . 'check_goods.do', [
                         'query' => [
                             'mdcode' => 'gifticon_nz',
-                            'goods_id' => $gifticon['wincube_id'],
+                            'goods_id' => $gift['wincube_id'],
                             'response_type' => 'JSON'
                         ]
                     ]);
@@ -2454,6 +2453,9 @@ class User extends REST_Controller
                         if($check_wincube['goodslist'][0]['goods_stus'] ==  '1')
                         {
                             $loop_data[$key]['qry_remaining'] = $this->User_model->qtyRemaing($loopvalue['gift_id']);
+                            $loop_data[$key]['product_name'] = $gift['name'];
+                        }else{
+                            $loop_data[$key]['qry_remaining'] = "";
                             $loop_data[$key]['product_name'] = $gift['name'];
                         }
                     }else{
