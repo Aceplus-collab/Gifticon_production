@@ -92,6 +92,7 @@ class Purchase extends MY_Controller
 
                 $row['giftto_user_name'] = $category['giftto_user_name'];
                 $row['giftfrom_user_name'] = $category['giftfrom_user_name'];
+                $row['response_reason'] = $category['response_reason'];
                 $row['currency'] = $category['currency'] ? strtoupper($category['currency']) : '-';
                 if($category['wincube_id'] != null)
                 {
@@ -108,10 +109,14 @@ class Purchase extends MY_Controller
                         $row['voucher_status'] = '<span class="text-center">'. ucfirst($category['voucher_status']) .'</br>'. $voucher_cancel_date .'</span>';
                         // $row['wincube_id'] = '<button class="recancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Recancel Voucher</button>';
                         $row['wincube_id'] = '-';
+                        // $row['mm_resend'] = '-';
                     }else{
                         $row['voucher_status'] = '<span class="text-center"> -- </span>';
+
                         $row['wincube_id'] = '<button class="cancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Cancel Voucher</button>';
                     }
+
+                    $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>MM Resend</button>';
                 }else{
                     $row['voucher_status'] = '-';
                     $row['wincube_id'] = '-';
@@ -197,7 +202,7 @@ class Purchase extends MY_Controller
     {
     	$wincube_id=$_POST['wincube_id'];
         $purchase_id=$_POST['purchase_id'];
-	$client = new GuzzleHttp\Client();
+	    $client = new GuzzleHttp\Client();
         $purchase = $this->db->get_where('tbl_purchases',array('id'=>$purchase_id))->row_array();
 
         if($purchase['is_redeem'] == 1)
@@ -259,6 +264,23 @@ class Purchase extends MY_Controller
         $this->db->update('tbl_purchases',array('voucher_status'=>null),array('id'=>$purchase_id));
         $output = array("success" => 'Purchase recancelled successfully!');
         echo json_encode($output);
+    }
+
+    function mmresend()
+    {
+    	$wincube_id=$_POST['wincube_id'];
+        $purchase_id=$_POST['purchase_id'];
+        $client = new GuzzleHttp\Client();
+        $res = $client->request('POST', WINCUBE_API_BASE . 'coupon_status.do', [
+            'query' => [
+                'mdcode' => 'gifticon_nz',
+                'response_type' => 'JSON',
+                'tr_id' => $purchase_id
+            ]
+        ]);
+        $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+        $goods = json_decode($body, true);
+        var_dump($goods);
     }
 
 }

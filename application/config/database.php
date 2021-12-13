@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'gifticonidfr.cwgqqbayf6tf.ap-southeast-2.rds.amazonaws.com',
-	'username' => 'gifticonroot',
-	'password' => '3*b2i9_q4G!bD',
-	'database' => 'gift_development',
+	'hostname' => 'localhost',
+	'username' => 'aceplus',
+	'password' => '123@Ace.com',
+	'database' => 'gift_backend',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

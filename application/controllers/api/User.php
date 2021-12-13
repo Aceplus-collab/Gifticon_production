@@ -1226,6 +1226,7 @@ class User extends REST_Controller
                             $ctr_id = $voucher_issue_result['ctr_id'];
                             $this->db->update('tbl_purchases', ['wincube_ctr_id' => $ctr_id], ['id' => $p_id]);
                         }
+                        $this->db->update('tbl_purchases', ['response_reason' => $voucher_issue_result['result_reason']], ['id' => $p_id]);
                         $voucher_issue_results[] = $voucher_issue_result;
                     }
                 }
@@ -2426,8 +2427,40 @@ class User extends REST_Controller
             
             foreach ($loop_data as $key => $loopvalue) {
             	$gift = $this->db->get_where('tbl_gifticons',array('id'=>$loopvalue['gift_id']))->row_array();
-                $loop_data[$key]['qry_remaining'] = $this->User_model->qtyRemaing($loopvalue['gift_id']);
-                $loop_data[$key]['product_name'] = $gift['name'];
+
+                //if korea item
+                if($gift['wincube_id'] != null)
+                {
+                    $client = new GuzzleHttp\Client();
+                    $res = $client->request('POST', WINCUBE_API_BASE . 'check_goods.do', [
+                        'query' => [
+                            'mdcode' => 'gifticon_nz',
+                            'goods_id' => $dataId,
+                            'response_type' => 'JSON'
+                        ]
+                    ]);
+                    $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+                    $check_wincube = json_decode($body, true);
+
+                    //if wincube check_goods.do response have
+                    if(count($check_wincube['goodslist']) > 0)
+                    {
+                        //if wincube check_goods.do response success
+                        if($check_wincube['goodslist'][0]['goods_stus'] ==  '1')
+                        {
+                            $loop_data[$key]['qry_remaining'] = $this->User_model->qtyRemaing($loopvalue['gift_id']);
+                            $loop_data[$key]['product_name'] = $gift['name'];
+                        }
+                    }else{
+                        //if wincube check_goods.do response fail
+                        $loop_data[$key]['qry_remaining'] = "";
+                        $loop_data[$key]['product_name'] = $gift['name'];
+                    }
+
+                }else{
+                    $loop_data[$key]['qry_remaining'] = $this->User_model->qtyRemaing($loopvalue['gift_id']);
+                    $loop_data[$key]['product_name'] = $gift['name'];
+                }
             }
 			
 			$message = ['code' => '1','message' => 'data found','data'=>$loop_data];

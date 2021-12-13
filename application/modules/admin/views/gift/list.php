@@ -74,6 +74,7 @@
                                                     <thead>
                                                         <tr >
                                                             <th  data-field="id" data-sortable="true" data-order="desc" class="text-center">#</th>
+                                                            <th  data-field="check_qty" data-sortable="true" class="text-center"> Check Qty </th>
                                                             <th  data-field="business_name" data-sortable="true" class="text-center"> Business Name </th>
                                                             <th  data-field="business_username" data-sortable="true" class="text-center"> Business username </th>
                                                             <th  data-field="image" data-sortable="true" class="text-center"> Image </th>
@@ -182,6 +183,19 @@
                         } 
                     });
                 });
+
+                $(document).on('click', '.check-qty-btn', function(){
+                    let data_id = $(this).attr('data-gift-id')
+                    $.ajax({
+                        type:"POST",
+                        url:"<?php echo base_url();?>admin/gift/check_qty",
+                        data: {"dataId": data_id},
+                        success:function(data){
+                            let res = JSON.parse(data);
+                            console.log(res, 'res')
+                        }
+                    });
+                })
             });
         </script>
         

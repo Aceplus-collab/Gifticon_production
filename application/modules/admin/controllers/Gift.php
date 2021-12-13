@@ -139,6 +139,8 @@ class Gift extends MY_Controller{
                 {
                 	$row['expiration_type'] = '12 Months from Puchased';
                 }
+
+                $row['check_qty'] = "<button class='check-qty-btn' data-gift-id='".$category['wincube_id']."'>Check Qty</button>";
                 
                 if($category['is_active']==='1'){
                     $row['is_active']="<button class='active label label-table label-success active' id='active'  value='".$category['id']."'>Active</button>";   
@@ -843,6 +845,22 @@ class Gift extends MY_Controller{
             "rows" => $data
             );
         echo json_encode($output);
+    }
+
+    function check_qty()
+    {
+    	$dataId=$_POST['dataId'];
+        $client = new GuzzleHttp\Client();
+        $res = $client->request('POST', WINCUBE_API_BASE . 'check_goods.do', [
+            'query' => [
+                'mdcode' => 'gifticon_nz',
+                'goods_id' => $dataId,
+                'response_type' => 'JSON'
+            ]
+        ]);
+        $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+        $goods = json_decode($body, true);
+        var_dump($goods['goodslist'][0]['goods_stus']);
     }
 
 }
