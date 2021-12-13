@@ -860,8 +860,31 @@ class Gift extends MY_Controller{
         ]);
         $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
         $goods = json_decode($body, true);
-        var_dump($goods['goodslist'][0]['goods_stus']);
+        var_dump($goods);
+
+        // $client = new GuzzleHttp\Client();
+        // $payload = [
+        //     'query' => [
+        //         'mdcode' => 'gifticon_nz',
+        //         'response_type' => 'JSON',
+        //         'msg' => mb_convert_encoding('해외에서 마음이 담긴 선물이 도착했습니다! 사랑이 담긴 선물을 확인해주세요 :D [Global Gifticon : 글로벌 선물하기 서비스]', 'EUC-KR', 'UTF-8'),
+        //         'title' => mb_convert_encoding('선물과 함께 예쁜 하루 보내세요. 먼 곳에서도 응원할게요', 'EUC-KR', 'UTF-8'),
+        //         'callback' => '09798179261',
+        //         'goods_id' => 'G00000028859',
+        //         'phone_no' => '09798179261',
+        //         'tr_id' => 22864
+        //     ]
+        // ];
+        // $res = $client->request('POST', WINCUBE_API_BASE . 'request.do', $payload);
+        // $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+        // $voucher_issue_result = json_decode($body, true);
+        
+        // $resposne_reason = $voucher_issue_result['result_code'];
+        // $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => 22863]);
+        // var_dump($voucher_issue_result);
     }
+
+    
 
 }
 ?>

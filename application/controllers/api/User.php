@@ -1200,6 +1200,7 @@ class User extends REST_Controller
 
                     // Call WinCube voucher-issuing API
                     if (!empty($giftdetails['wincube_id'])) {
+
                         $user = $this->db->get_where('tbl_user', ['id' => $user_id])->row_array();
                         $phone_number = $allpostdata['phone'] ?? $user['phone'];
                         $client = new GuzzleHttp\Client();
@@ -1226,8 +1227,11 @@ class User extends REST_Controller
                             $ctr_id = $voucher_issue_result['ctr_id'];
                             $this->db->update('tbl_purchases', ['wincube_ctr_id' => $ctr_id], ['id' => $p_id]);
                         }
-                        $this->db->update('tbl_purchases', ['response_reason' => $voucher_issue_result['result_reason']], ['id' => $p_id]);
+                        $resposne_reason = $voucher_issue_result['result_code'];
+                        $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $p_id]);
+
                         $voucher_issue_results[] = $voucher_issue_result;
+
                     }
                 }
             }
@@ -2432,10 +2436,11 @@ class User extends REST_Controller
                 if($gift['wincube_id'] != null)
                 {
                     $client = new GuzzleHttp\Client();
+                    $gifticon = $this->User_model->qtyRemaing($loopvalue['gift_id']);
                     $res = $client->request('POST', WINCUBE_API_BASE . 'check_goods.do', [
                         'query' => [
                             'mdcode' => 'gifticon_nz',
-                            'goods_id' => $dataId,
+                            'goods_id' => $gifticon['wincube_id'],
                             'response_type' => 'JSON'
                         ]
                     ]);
