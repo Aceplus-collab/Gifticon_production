@@ -113,9 +113,9 @@ class Purchase extends MY_Controller
                         $row['wincube_id'] = '-';
                     }else{
 
-                        if($category['voucher_status'] == "1000")
+                        if($category['voucher_status'] != "cancelled" && $category['voucher_status'] != null)
                         {
-                            $row['voucher_status'] = '<span class="text-center">Success</span>';
+                            $row['voucher_status'] = '<span class="text-center">'.$errorStatus[$category['voucher_status']].'</span>';
                         }else{
                             $row['voucher_status'] = '<span class="text-center">---</span>';
                         }
@@ -146,7 +146,7 @@ class Purchase extends MY_Controller
                     {
                         $row['mm_resend'] = '-';
                     }else{
-                        $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>MM Resend</button>';
+                        $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Resend</button>';
                     }
 
                 }else{
@@ -253,7 +253,7 @@ class Purchase extends MY_Controller
             ]);
             $status_body = mb_convert_encoding($status_res->getBody(), 'UTF-8', 'EUC-KR');
             $status = json_decode($status_body, true);
-            if ($status['StatusCode'] == 4006) {
+            if (isset($status['StatusCode']) && $status['StatusCode'] == 4006) {
                 $this->db->update('tbl_purchases', [
                     'is_redeem' => 1,
                     'redeem_date' => date_format(date_create($status['SwapDt']), 'Y-m-d H:i:s')
@@ -261,36 +261,46 @@ class Purchase extends MY_Controller
                 echo json_encode(['error' => "This item is can't cancel, becuase already redeem", 'wincube_response' => null]);
                 die;
             }else{
-                //$client = new GuzzleHttp\Client();
-                $res = $client->request('POST', WINCUBE_API_BASE . 'coupon_cancel.do', [
-                    'query' => [
-                        'mdcode' => 'gifticon_nz',
-                        'tr_id' => (int)$purchase_id,
-                        'response_type' => 'JSON'
-                    ]
-                ]);
-                $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
-                $goods = json_decode($body, true);
-                if (empty($goods)) {
-                    echo json_encode(['error' => 'Something was wrong querying WinCube', 'wincube_response' => $body]);
-                    die;
-                }else{
-                    if($goods['StatusCode'] == "0")
-                    {
-                        $this->db->update('tbl_purchases',array('voucher_status'=>'cancelled'),array('id'=>$purchase_id));
-                        $this->db->update('tbl_purchases',array('voucher_cancel_time'=>$goods['cancelDateTime']),array('id'=>$purchase_id));
-                        $output = array("success" => 'Purchase cancelled successfully!');
-                        echo json_encode($output);
+
+                if($purchase['wincube_ctr_id'] != null)
+                {
+
+                    $res = $client->request('POST', WINCUBE_API_BASE . 'coupon_cancel.do', [
+                        'query' => [
+                            'mdcode' => 'gifticon_nz',
+                            'tr_id' => (int)$purchase_id,
+                            'response_type' => 'JSON'
+                        ]
+                    ]);
+                    $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+                    $goods = json_decode($body, true);
+                    if (empty($goods)) {
+                        echo json_encode(['error' => 'Something was wrong querying WinCube', 'wincube_response' => $body]);
+                        die;
                     }else{
-                        $errorStatus = include APPPATH.'/config/wincube_error_code.php';
-                        $resposne_reason = $goods['StatusCode'];
-
-                        $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $purchase_id]);
-
-                        $output = array("error" => $errorStatus[$resposne_reason]);
-                        // $output = array("error" => 'Something was wrong querying WinCube!');
-                        echo json_encode($output);
+                        if($goods['StatusCode'] == "0")
+                        {
+                            $this->db->update('tbl_purchases',array('voucher_status'=>'cancelled'),array('id'=>$purchase_id));
+                            $this->db->update('tbl_purchases',array('voucher_cancel_time'=>$goods['cancelDateTime']),array('id'=>$purchase_id));
+                            $output = array("success" => 'Purchase cancelled successfully!');
+                            echo json_encode($output);
+                        }else{
+                            $errorStatus = include APPPATH.'/config/wincube_error_code.php';
+                            $resposne_reason = $goods['StatusCode'];
+    
+                            $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $purchase_id]);
+    
+                            $output = array("error" => $errorStatus[$resposne_reason]);
+                            // $output = array("error" => 'Something was wrong querying WinCube!');
+                            echo json_encode($output);
+                        }
                     }
+                }else{
+                    $dateTime = date('YmdHis');
+                    $this->db->update('tbl_purchases',array('voucher_status'=>'cancelled'),array('id'=>$purchase_id));
+                    $this->db->update('tbl_purchases',array('voucher_cancel_time'=>$dateTime),array('id'=>$purchase_id));
+                    $output = array("success" => 'Purchase cancelled successfully!');
+                    echo json_encode($output);
                 }
             }
         }
