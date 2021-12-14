@@ -1227,8 +1227,8 @@ class User extends REST_Controller
                             $ctr_id = $voucher_issue_result['ctr_id'];
                             $this->db->update('tbl_purchases', ['wincube_ctr_id' => $ctr_id], ['id' => $p_id]);
                         }
-                        $resposne_reason = $voucher_issue_result['result_code'];
-                        $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $p_id]);
+                        $response_reason = $voucher_issue_result['result_code'];
+                        $this->db->update('tbl_purchases', ['response_reason' => $response_reason], ['id' => $p_id]);
 
                         $voucher_issue_results[] = $voucher_issue_result;
 

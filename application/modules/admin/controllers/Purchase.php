@@ -100,7 +100,7 @@ class Purchase extends MY_Controller
                 $row['currency'] = $category['currency'] ? strtoupper($category['currency']) : '-';
                 if($category['wincube_id'] != null)
                 {
-                    if($category['voucher_status'] != null)
+                    if($category['voucher_status'] == "cancelled")
                     {
                         if($category['voucher_cancel_time'] != null)
                         {
@@ -108,18 +108,41 @@ class Purchase extends MY_Controller
                             $voucher_cancel_date = $voucher_cancel_date->format('Y-m-d H:i:s');
                         }else{
                             $voucher_cancel_date = '-';
-                        }
-                        
+                        } 
                         $row['voucher_status'] = '<span class="text-center">'. ucfirst($category['voucher_status']) .'</br>'. $voucher_cancel_date .'</span>';
-                        // $row['wincube_id'] = '<button class="recancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Recancel Voucher</button>';
                         $row['wincube_id'] = '-';
                     }else{
-                        $row['voucher_status'] = '<span class="text-center"> -- </span>';
+
+                        if($category['voucher_status'] == "1000")
+                        {
+                            $row['voucher_status'] = '<span class="text-center">Success</span>';
+                        }else{
+                            $row['voucher_status'] = '<span class="text-center">---</span>';
+                        }
 
                         $row['wincube_id'] = '<button class="cancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Cancel Voucher</button>';
                     }
 
-                    if($category['voucher_status'] != null || $category['response_reason'] == '0')
+                    // if($category['voucher_status'] != null)
+                    // {
+                    //     if($category['voucher_cancel_time'] != null)
+                    //     {
+                    //         $voucher_cancel_date = new DateTime($category['voucher_cancel_time']);
+                    //         $voucher_cancel_date = $voucher_cancel_date->format('Y-m-d H:i:s');
+                    //     }else{
+                    //         $voucher_cancel_date = '-';
+                    //     }
+                        
+                    //     $row['voucher_status'] = '<span class="text-center">'. ucfirst($category['voucher_status']) .'</br>'. $voucher_cancel_date .'</span>';
+                    //     // $row['wincube_id'] = '<button class="recancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Recancel Voucher</button>';
+                    //     $row['wincube_id'] = '-';
+                    // }else{
+                    //     $row['voucher_status'] = '<span class="text-center"> -- </span>';
+
+                    //     $row['wincube_id'] = '<button class="cancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Cancel Voucher</button>';
+                    // }
+
+                    if($category['response_reason'] == '0')
                     {
                         $row['mm_resend'] = '-';
                     }else{
@@ -259,7 +282,13 @@ class Purchase extends MY_Controller
                         $output = array("success" => 'Purchase cancelled successfully!');
                         echo json_encode($output);
                     }else{
-                        $output = array("error" => 'Something was wrong querying WinCube!');
+                        $errorStatus = include APPPATH.'/config/wincube_error_code.php';
+                        $resposne_reason = $goods['StatusCode'];
+
+                        $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $purchase_id]);
+
+                        $output = array("error" => $errorStatus[$resposne_reason]);
+                        // $output = array("error" => 'Something was wrong querying WinCube!');
                         echo json_encode($output);
                     }
                 }

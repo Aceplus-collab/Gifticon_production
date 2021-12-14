@@ -106,8 +106,8 @@
                                                             <th  data-field="giftto_user_name" data-sortable="false"> giftto username </th>
                                                             <th  data-field="giftfrom_user_name" data-sortable="false"> giftfrom username </th>
                                                             <th  data-field="voucher_status" data-sortable="false" class="text-center voucher-status"> Voucher Status </th>
-                                                            <th  data-field="mm_resend" data-sortable="false" class="text-center voucher-status"> MM Resend </th>
                                                             <th  data-field="response_reason" data-sortable="false" class="text-center voucher-status"> Resposne Reason </th>
+                                                            <th  data-field="mm_resend" data-sortable="false" class="text-center voucher-status"> Resend MMS </th>
                                                             <th  data-field="wincube_id" data-sortable="false" class="text-center action-btn"> Action </th>
                                                         </tr>
                                                     </thead>
