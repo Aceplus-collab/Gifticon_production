@@ -92,7 +92,11 @@ class Purchase extends MY_Controller
 
                 $row['giftto_user_name'] = $category['giftto_user_name'];
                 $row['giftfrom_user_name'] = $category['giftfrom_user_name'];
-                $row['response_reason'] = $category['response_reason'];
+
+                $errorStatus = include APPPATH.'/config/wincube_error_code.php';
+
+                $row['response_reason'] = $errorStatus[$category['response_reason']];
+
                 $row['currency'] = $category['currency'] ? strtoupper($category['currency']) : '-';
                 if($category['wincube_id'] != null)
                 {
@@ -109,17 +113,23 @@ class Purchase extends MY_Controller
                         $row['voucher_status'] = '<span class="text-center">'. ucfirst($category['voucher_status']) .'</br>'. $voucher_cancel_date .'</span>';
                         // $row['wincube_id'] = '<button class="recancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Recancel Voucher</button>';
                         $row['wincube_id'] = '-';
-                        // $row['mm_resend'] = '-';
                     }else{
                         $row['voucher_status'] = '<span class="text-center"> -- </span>';
 
                         $row['wincube_id'] = '<button class="cancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Cancel Voucher</button>';
                     }
 
-                    $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>MM Resend</button>';
+                    if($category['voucher_status'] != null || $category['response_reason'] == '0')
+                    {
+                        $row['mm_resend'] = '-';
+                    }else{
+                        $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>MM Resend</button>';
+                    }
+
                 }else{
                     $row['voucher_status'] = '-';
                     $row['wincube_id'] = '-';
+                    $row['mm_resend'] = '-';
                 }
 
                 $data[] = $row;
@@ -271,16 +281,37 @@ class Purchase extends MY_Controller
     	$wincube_id=$_POST['wincube_id'];
         $purchase_id=$_POST['purchase_id'];
         $client = new GuzzleHttp\Client();
-        $res = $client->request('POST', WINCUBE_API_BASE . 'coupon_status.do', [
-            'query' => [
-                'mdcode' => 'gifticon_nz',
-                'response_type' => 'JSON',
-                'tr_id' => $purchase_id
-            ]
-        ]);
-        $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
-        $goods = json_decode($body, true);
-        var_dump($goods);
+
+        try {
+
+            $res = $client->request('POST', WINCUBE_API_BASE . '/resend.do', [
+                'query' => [
+                    'mdcode' => 'gifticon_nz',
+                    'response_type' => 'JSON',
+                    'tr_id' => $purchase_id
+                ]
+            ]);
+            $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+            $goods = json_decode($body, true);
+
+            if($goods['result_code'] == 0)
+            {
+                $output = array("success" => 'Message resend successfully!');
+                $this->db->update('tbl_purchases', ['response_reason' => '0'], ['id' => $purchase_id]);
+                echo json_encode($output);
+            }else{
+            
+                $errorStatus = include APPPATH.'/config/wincube_error_code.php';
+                $resposne_reason = $goods['result_code'];
+                
+                $output = array("success" => $errorStatus[$resposne_reason]);
+                $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $purchase_id]);
+                echo json_encode($output);
+            }
+        } catch (Exception $e) {
+            $output = array("error" => 'Something Wrong!');
+            echo json_encode($output);
+        }
     }
 
 }

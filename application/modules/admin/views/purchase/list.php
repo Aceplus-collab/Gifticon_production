@@ -219,6 +219,7 @@
 
                 
                 $(document).on('click', '.mm-resend-btn', function(){
+                    $('.alert_div').empty()
                     let wincube_id = $(this).attr('data-wincube-id');
                     let purchase_id = $(this).attr('data-purchase-id');
                     $.ajax({
@@ -227,7 +228,12 @@
                         data: {"wincube_id": wincube_id, "purchase_id":purchase_id},
                         success:function(data){
                             let res = JSON.parse(data);
-                            console.log(res, 'res')
+                            if(res.success)
+                            {
+                                $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>')
+                            }else{
+                                $('.alert_div').append('<br><div class="alert alert-error">'+res.error+'</div>')
+                            }
                         }
                     });
                 })

@@ -2413,7 +2413,7 @@ class User extends REST_Controller
 
     function checkQty_post()
     {
-        
+
         extract($this->input->post());
         if(!isset($user_id) || $user_id == "" || $metadata == "")
         {
@@ -2423,7 +2423,6 @@ class User extends REST_Controller
 
         $allpostdata = $this->input->post();
         $mdata = $allpostdata['metadata'];
-        
 
         if($this->common->isJson($mdata))
         {

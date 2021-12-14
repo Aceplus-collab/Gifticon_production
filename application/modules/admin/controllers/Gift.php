@@ -140,7 +140,7 @@ class Gift extends MY_Controller{
                 	$row['expiration_type'] = '12 Months from Puchased';
                 }
 
-                $row['check_qty'] = "<button class='check-qty-btn' data-gift-id='".$category['wincube_id']."'>Check Qty</button>";
+                // $row['check_qty'] = "<button class='check-qty-btn' data-gift-id='".$category['wincube_id']."'>Check Qty</button>";
                 
                 if($category['is_active']==='1'){
                     $row['is_active']="<button class='active label label-table label-success active' id='active'  value='".$category['id']."'>Active</button>";   
@@ -849,39 +849,42 @@ class Gift extends MY_Controller{
 
     function check_qty()
     {
-    	$dataId=$_POST['dataId'];
-        $client = new GuzzleHttp\Client();
-        $res = $client->request('POST', WINCUBE_API_BASE . 'check_goods.do', [
-            'query' => [
-                'mdcode' => 'gifticon_nz',
-                'goods_id' => $dataId,
-                'response_type' => 'JSON'
-            ]
-        ]);
-        $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
-        $goods = json_decode($body, true);
-        var_dump($goods);
-
+    	// $dataId=$_POST['dataId'];
         // $client = new GuzzleHttp\Client();
-        // $payload = [
+        // $res = $client->request('POST', WINCUBE_API_BASE . 'check_goods.do', [
         //     'query' => [
         //         'mdcode' => 'gifticon_nz',
-        //         'response_type' => 'JSON',
-        //         'msg' => mb_convert_encoding('해외에서 마음이 담긴 선물이 도착했습니다! 사랑이 담긴 선물을 확인해주세요 :D [Global Gifticon : 글로벌 선물하기 서비스]', 'EUC-KR', 'UTF-8'),
-        //         'title' => mb_convert_encoding('선물과 함께 예쁜 하루 보내세요. 먼 곳에서도 응원할게요', 'EUC-KR', 'UTF-8'),
-        //         'callback' => '09798179261',
-        //         'goods_id' => 'G00000028859',
-        //         'phone_no' => '09798179261',
-        //         'tr_id' => 22864
+        //         'goods_id' => $dataId,
+        //         'response_type' => 'JSON'
         //     ]
-        // ];
-        // $res = $client->request('POST', WINCUBE_API_BASE . 'request.do', $payload);
+        // ]);
         // $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
-        // $voucher_issue_result = json_decode($body, true);
+        // $goods = json_decode($body, true);
+        // var_dump($goods);
+
+        $msile = include APPPATH.'/config/wincube_error_code.php';
+
+        $client = new GuzzleHttp\Client();
+        $payload = [
+            'query' => [
+                'mdcode' => 'gifticon_nz',
+                'response_type' => 'JSON',
+                'msg' => mb_convert_encoding('해외에서 마음이 담긴 선물이 도착했습니다! 사랑이 담긴 선물을 확인해주세요 :D [Global Gifticon : 글로벌 선물하기 서비스]', 'EUC-KR', 'UTF-8'),
+                'title' => mb_convert_encoding('선물과 함께 예쁜 하루 보내세요. 먼 곳에서도 응원할게요', 'EUC-KR', 'UTF-8'),
+                'callback' => '09798179261',
+                'goods_id' => 'G00000028859',
+                'phone_no' => '09798179261',
+                'tr_id' => 22866
+            ]
+        ];
+        $res = $client->request('POST', WINCUBE_API_BASE . 'request.do', $payload);
+        $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+        $voucher_issue_result = json_decode($body, true);
         
-        // $resposne_reason = $voucher_issue_result['result_code'];
+        $resposne_reason = $voucher_issue_result['result_code'];
+        var_dump($msile[$resposne_reason]);
         // $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => 22863]);
-        // var_dump($voucher_issue_result);
+        var_dump($voucher_issue_result);
     }
 
     
