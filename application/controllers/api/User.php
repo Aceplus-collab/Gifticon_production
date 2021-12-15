@@ -873,7 +873,15 @@ class User extends REST_Controller
                 }else{
                     $frndid = $value['user_id'];
                 }
-                $friends[$key]['friend_data'] = $this->User_model->get_user($frndid);
+
+                $fri_data = $this->User_model->get_user($frndid);
+
+                if($fri_data == !null)
+                {
+                    $friends[$key]['friend_data'] = $fri_data;
+                }else{
+                    unset($friends[$key]);
+                }
             }
 
             $message = ['code' => '1','message' => $this->lang->line("data_found"),'data'=>$friends];
