@@ -106,8 +106,8 @@
                                                             <th  data-field="giftto_user_name" data-sortable="false"> giftto username </th>
                                                             <th  data-field="giftfrom_user_name" data-sortable="false"> giftfrom username </th>
                                                             <th  data-field="voucher_status" data-sortable="false" class="text-center voucher-status"> Voucher Status </th>
-                                                            <th  data-field="response_reason" data-sortable="false" class="text-center voucher-status"> Remark </th>
-                                                            <th  data-field="mm_resend" data-sortable="false" class="text-center voucher-status"> Resend MMS </th>
+                                                            <th  data-field="response_reason" data-sortable="false" class="text-center remark-status"> Remark </th>
+                                                            <th  data-field="mm_resend" data-sortable="false" class="text-center resend-mm-div"> Resend MMS </th>
                                                             <th  data-field="wincube_id" data-sortable="false" class="text-center action-btn"> Action </th>
                                                         </tr>
                                                     </thead>
@@ -168,10 +168,10 @@
                             data: {"wincube_id": wincube_id, "purchase_id":purchase_id},
                             success:function(data){
                                 let res = JSON.parse(data);
-                                if(res['success'])
+                                if(res.success)
                                 {
-                                    $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>')
-                                    _that.parent('.action-btn').prev('.voucher-status').find('span').text("Cancelled");
+                                    $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>');
+                                    _that.parent('.action-btn').parent('tr').find('.voucher-status').find('span').text(res.message);
                                     _that.parent('.action-btn').append('<span> - </span>');
                                     _that.remove();
                                 }else{
@@ -222,6 +222,7 @@
                     $('.alert_div').empty()
                     let wincube_id = $(this).attr('data-wincube-id');
                     let purchase_id = $(this).attr('data-purchase-id');
+                    let _that = $(this);
                     $.ajax({
                         type:"POST",
                         url:"<?php echo base_url();?>admin/purchase/mmresend",
@@ -230,9 +231,11 @@
                             let res = JSON.parse(data);
                             if(res.success)
                             {
-                                $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>')
+                                $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>');
+                                _that.parent('.resend-mm-div').parent('tr').find('.remark-status').text(res.message);
+                                _that.remove();
                             }else{
-                                $('.alert_div').append('<br><div class="alert alert-error">'+res.error+'</div>')
+                                $('.alert_div').append('<br><div class="alert alert-warning">'+res.error+'</div>')
                             }
                             window.scrollTo({top: 0, behavior: 'smooth'});
                         }

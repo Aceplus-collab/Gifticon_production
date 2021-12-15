@@ -236,6 +236,7 @@ class Purchase extends MY_Controller
     	$wincube_id=$_POST['wincube_id'];
         $purchase_id=$_POST['purchase_id'];
 	    $client = new GuzzleHttp\Client();
+
         $purchase = $this->db->get_where('tbl_purchases',array('id'=>$purchase_id))->row_array();
 
         if($purchase['is_redeem'] == 1)
@@ -282,7 +283,11 @@ class Purchase extends MY_Controller
                         {
                             $this->db->update('tbl_purchases',array('voucher_status'=>'cancelled'),array('id'=>$purchase_id));
                             $this->db->update('tbl_purchases',array('voucher_cancel_time'=>$goods['cancelDateTime']),array('id'=>$purchase_id));
-                            $output = array("success" => 'Purchase cancelled successfully!');
+
+                            $voucher_cancel_date = new DateTime($goods['cancelDateTime']);
+                            $voucher_cancel_date = $voucher_cancel_date->format('Y-m-d H:i:s');
+
+                            $output = array("success" => 'Purchase cancelled successfully!', 'message' => 'Cancelled ' . $voucher_cancel_date);
                             echo json_encode($output);
                         }else{
                             $errorStatus = include APPPATH.'/config/wincube_error_code.php';
@@ -290,16 +295,20 @@ class Purchase extends MY_Controller
     
                             $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $purchase_id]);
     
-                            $output = array("error" => $errorStatus[$resposne_reason]);
+                            $output = array("error" => $errorStatus[$resposne_reason], 'message' => $errorStatus[$resposne_reason]);
                             // $output = array("error" => 'Something was wrong querying WinCube!');
                             echo json_encode($output);
                         }
                     }
                 }else{
                     $dateTime = date('YmdHis');
+
+                    $voucher_cancel_date = new DateTime($dateTime);
+                    $voucher_cancel_date = $voucher_cancel_date->format('Y-m-d H:i:s');
+
                     $this->db->update('tbl_purchases',array('voucher_status'=>'cancelled'),array('id'=>$purchase_id));
                     $this->db->update('tbl_purchases',array('voucher_cancel_time'=>$dateTime),array('id'=>$purchase_id));
-                    $output = array("success" => 'Purchase cancelled successfully!');
+                    $output = array("success" => 'Purchase cancelled successfully!', 'message' => 'Cancelled ' . $voucher_cancel_date);
                     echo json_encode($output);
                 }
             }
@@ -335,7 +344,7 @@ class Purchase extends MY_Controller
 
             if($goods['result_code'] == 0)
             {
-                $output = array("success" => 'Message resend successfully!');
+                $output = array("success" => 'Message resend successfully!', 'message' => 'Resend MMS Success');
                 $this->db->update('tbl_purchases', ['response_reason' => '01'], ['id' => $purchase_id]);
                 echo json_encode($output);
             }else{
@@ -343,7 +352,7 @@ class Purchase extends MY_Controller
                 $errorStatus = include APPPATH.'/config/wincube_error_code.php';
                 $resposne_reason = $goods['result_code'];
                 
-                $output = array("success" => $errorStatus[$resposne_reason]);
+                $output = array("success" => $errorStatus[$resposne_reason], 'message' => $errorStatus[$resposne_reason]);
                 $this->db->update('tbl_purchases', ['response_reason' => $resposne_reason], ['id' => $purchase_id]);
                 echo json_encode($output);
             }
