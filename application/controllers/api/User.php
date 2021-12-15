@@ -884,7 +884,7 @@ class User extends REST_Controller
                 }
             }
 
-            $message = ['code' => '1','message' => $this->lang->line("data_found"),'data'=>$friends];
+            $message = ['code' => '1','message' => $this->lang->line("data_found"),'data'=>(array)$friends];
             $this->response($message, REST_Controller::HTTP_OK);
 
         }
