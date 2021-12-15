@@ -336,7 +336,7 @@ class Purchase extends MY_Controller
             if($goods['result_code'] == 0)
             {
                 $output = array("success" => 'Message resend successfully!');
-                $this->db->update('tbl_purchases', ['response_reason' => '0'], ['id' => $purchase_id]);
+                $this->db->update('tbl_purchases', ['response_reason' => '01'], ['id' => $purchase_id]);
                 echo json_encode($output);
             }else{
             

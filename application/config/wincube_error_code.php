@@ -3,6 +3,7 @@
 return array(
     '' => '---',
     '0' => 'Success',
+    '01' => 'Resend MMS Success',
     '1000' => 'Purchase registration success',
     '3001' => 'Duplication request.',
     '3002' => 'Unenrolled IP.',

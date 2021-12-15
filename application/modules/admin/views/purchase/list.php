@@ -177,6 +177,7 @@
                                 }else{
                                     $('.alert_div').append('<br><div class="alert alert-warning">'+res.error+'</div>')
                                 }
+                                window.scrollTo({top: 0, behavior: 'smooth'});
                             }
                         });
                     }
@@ -211,6 +212,7 @@
                             _that.parent('.action-btn').prev('.voucher-status').find('span').text("--");
                             _that.removeClass('recancel-voucher-excel-btn');
                             _that.addClass('cancel-voucher-excel-btn');
+                            window.scrollTo({top: 0, behavior: 'smooth'});
                         }
                     });
                 });
@@ -232,6 +234,7 @@
                             }else{
                                 $('.alert_div').append('<br><div class="alert alert-error">'+res.error+'</div>')
                             }
+                            window.scrollTo({top: 0, behavior: 'smooth'});
                         }
                     });
                 })
