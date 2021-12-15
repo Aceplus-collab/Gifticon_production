@@ -880,7 +880,7 @@ class User extends REST_Controller
                 {
                     $friends[$key]['friend_data'] = $fri_data;
                 }else{
-                    unset($friends[$key]);
+                    $friends[$key]['friend_data'] = null;
                 }
             }
 
