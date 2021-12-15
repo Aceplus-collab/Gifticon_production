@@ -146,12 +146,7 @@ class Purchase extends MY_Controller
                     {
                         $row['mm_resend'] = '-';
                     }else{
-                        if($category['response_reason'] == "2001")
-                        {
-                            $row['mm_resend'] = '-';
-                        }else{
-                            $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Resend</button>';
-                        }
+                        $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Resend</button>';
                     }
 
                 }else{
