@@ -142,12 +142,12 @@ class Purchase extends MY_Controller
                     //     $row['wincube_id'] = '<button class="cancel-voucher-excel-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Cancel Voucher</button>';
                     // }
 
-                    if($category['response_reason'] == '01')
-                    {
-                        $row['mm_resend'] = '-';
-                    }else{
+                    // if($category['response_reason'] == '01')
+                    // {
+                    //     $row['mm_resend'] = '-';
+                    // }else{
                         $row['mm_resend'] = '<button class="mm-resend-btn" data-purchase-id='. $category['purchase_id'] .' data-wincube-id='. $category['wincube_id'] .'>Resend</button>';
-                    }
+                    // }
 
                 }else{
                     $row['voucher_status'] = '-';
