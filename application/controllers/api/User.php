@@ -1580,52 +1580,52 @@ class User extends REST_Controller
                 }
                 $isKItem = $this->db->get_where('tbl_gifticons',array('id'=>$purchase[$k]['gifticon_id']))->row_array();
 
-                if($isKItem['wincube_id'] != NULL)
+                if(!empty($isKItem['wincube_id']))
                 {
                     unset($purchase[$k]);
                 }
             }
-            $newpurchase = array_values($purchase);
+            $purchase = array_values($purchase);
 
-            foreach ($newpurchase as $key => $value) {
+            foreach ($purchase as $key => $value) {
 
-				$newpurchase[$key]['gifticons'] = $this->User_model->getGift($value['gifticon_id']);
+				$purchase[$key]['gifticons'] = $this->User_model->getGift($value['gifticon_id']);
 
 				if($user_id == $value['user_id'])
 				{
-					$newpurchase[$key]['is_purchased'] = '1';
+					$purchase[$key]['is_purchased'] = '1';
 				}else{
-					$newpurchase[$key]['is_purchased'] = '0';
+					$purchase[$key]['is_purchased'] = '0';
 				}
 
 				if($value['gift_from_user_id'] != 0)
 				{
 					$userdetail = $this->User_model->get_user($value['gift_from_user_id']);
-					$newpurchase[$key]['sent_from'] = $userdetail['username'];
+					$purchase[$key]['sent_from'] = $userdetail['username'];
 				}else{
-					$newpurchase[$key]['sent_from'] = '';
+					$purchase[$key]['sent_from'] = '';
 				}
 
                 if($value['giftto_user_id'] != 0)
                 {
                     $userdetail1 = $this->User_model->get_user($value['giftto_user_id']);
-                    $newpurchase[$key]['sent_to'] = $userdetail1['username'];
+                    $purchase[$key]['sent_to'] = $userdetail1['username'];
                 }else{
-                    $newpurchase[$key]['sent_to'] = '';
+                    $purchase[$key]['sent_to'] = '';
                 }
 
                 if($value['main_image'] != '')
                 {
-                    $newpurchase[$key]['main_image'] = GIFT_IMAGE.$value['main_image'];
+                    $purchase[$key]['main_image'] = GIFT_IMAGE.$value['main_image'];
                 }
 
                 if($value['crop_image'] != '')
                 {
-                    $newpurchase[$key]['crop_image'] = GIFT_IMAGE.$value['crop_image'];
+                    $purchase[$key]['crop_image'] = GIFT_IMAGE.$value['crop_image'];
                 }
 			}
         
-            $message = ['code' => '1','message' =>$this->lang->line("data_found"),"data"=>$newpurchase];
+            $message = ['code' => '1','message' =>$this->lang->line("data_found"),"data"=>$purchase];
         	$this->response($message, REST_Controller::HTTP_OK);	 
 
 		}else{
