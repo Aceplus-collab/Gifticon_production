@@ -233,7 +233,7 @@
                             {
                                 $('.alert_div').append('<br><div class="alert alert-success">'+res.success+'</div>');
                                 _that.parent('.resend-mm-div').parent('tr').find('.remark-status').text(res.message);
-                                _that.remove();
+                                // _that.remove();
                             }else{
                                 $('.alert_div').append('<br><div class="alert alert-warning">'+res.error+'</div>')
                             }
