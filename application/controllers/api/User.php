@@ -1645,16 +1645,17 @@ class User extends REST_Controller
         }
 
         if(!isset($page) || $page <= 0)
-        { 
+        {
             $page = 1;
         }
 
         $condition = "";
         $removeIDS = $this->User_model->mygiftNOTIN($user_id);
+
         if($removeIDS != '')
         {
             $condition = " `id` NOT IN (".$removeIDS.") AND ";
-	}
+	    }
 
         $this->db->select("tbl_purchases.*,tbl_purchases.id as purchase_id");
 		$this->db->from('tbl_purchases'); 
@@ -1674,18 +1675,17 @@ class User extends REST_Controller
 
                  if($isKItem['wincube_id'] == NULL)
                  {
-                     if($purchase[$k]['is_redeem'] == 0 && ($purchase[$k]['giftto_user_id'] == $user_id && $purchase[$k]['move_to'] != 'used_sent'))
-                     {
+                    if($purchase[$k]['is_redeem'] == 0 && ($purchase[$k]['giftto_user_id'] == $user_id && $purchase[$k]['move_to'] != 'used_sent'))
+                    {
                        unset($purchase[$k]);
-		     }
-		     else if($purchase[$k]['user_id'] == $user_id && $purchase[$k]['giftto_user_id'] == 0 && $purchase[$k]['gift_from_user_id'] == 0 && $purchase[$k]['move_to'] != 'used_sent')
-		     {
-		     	unset($purchase[$k]);
-		     }
-                 }
-	     }
+		            } else if ($purchase[$k]['user_id'] == $user_id && $purchase[$k]['giftto_user_id'] == 0 && $purchase[$k]['gift_from_user_id'] == 0 && $purchase[$k]['move_to'] != 'used_sent')
+                    {
+                        unset($purchase[$k]);
+                    }
+                }
+	        }
 
-		 $purchase = array_values($purchase);
+		    $purchase = array_values($purchase);
 
 			foreach ($purchase as $key => $value) {
 				$purchase[$key]['gifticons'] = $this->User_model->getGift($value['gifticon_id']);
@@ -1923,13 +1923,13 @@ class User extends REST_Controller
  
         $data = array();
 
-        $totalRewardPoint = $this->db->get_where('tbl_user',array('id'=>$user_id))->row_array();
-
         $totalgifticons = $this->db->get_where('tbl_gifticons',array('is_delete'=>0))->num_rows();
 
         $totalGiftshop = $this->db->get_where('tbl_businesses',array('is_delete'=>0))->num_rows();
 
         $notification_count = $this->db->get_where('tbl_notification',array('user_id'=>$user_id,'is_read'=>0))->num_rows();
+
+        $totalRewardPoint = array('reward_points' => 0);
 
         $condition = "";
         $removeIDS = $this->User_model->usedsendNOTIN($user_id);
@@ -1945,6 +1945,8 @@ class User extends REST_Controller
             $this->db->where(" ".$condition." ((user_id = '".$user_id."' OR `giftto_user_id` = '".$user_id."') AND `is_redeem` = 0 AND gift_from_user_id != '".$user_id."' ) OR (id IN(SELECT purchase_id FROM tbl_purchases_swap WHERE user_id= '".$user_id."' AND move_to = 'mygiftbox') ) ");
             $query = $this->db->get();
             $totalMygift = $query->num_rows();
+
+            $totalRewardPoint = $this->db->get_where('tbl_user',array('id'=>$user_id))->row_array();
 
             //$this->db->get_where('tbl_notification',array('user_id'=>$user_id,'user_type'=>'U','type'))
 
