@@ -2499,11 +2499,11 @@ class User extends REST_Controller
 
         $app_version_db = $this->db->get_where('tbl_app_version',array('os_type' => $device_type, 'version' => $app_version))->row_array();
 
-        if($app_version)
+        if($app_version_db)
         {
-            if($app_version['is_force_update'])
+            if($app_version_db['is_force_update'])
             {
-                $message = ['code' => '6','message' => $app_version_db];
+                $message = ['code' => '6','message' => 'Force update found.'];
                 $this->response($message, REST_Controller::HTTP_OK);  
             }else{
                 $message = ['code' => '7','message' => 'Simple update found.'];
