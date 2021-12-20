@@ -2488,5 +2488,33 @@ class User extends REST_Controller
         }    
     }
 
+    function appVersionCheck_post()
+    {
+        extract($this->input->post());
+        if(!isset($device_type) || $device_type == "" || !isset($app_version) || $app_version == "")
+        {
+            $message = ['code' => '0','message' => 'Invalid Parameters'];
+            $this->response($message, REST_Controller::HTTP_OK);  
+        }
+
+        $app_version_db = $this->db->get_where('tbl_app_version',array('os_type' => $device_type, 'version' => $app_version))->row_array();
+
+        if($app_version == null)
+        {
+            $message = ['code' => '1','message' => 'Update not found.'];
+            $this->response($message, REST_Controller::HTTP_OK);  
+        }else{
+            if($app_version['is_force_update'])
+            {
+                $message = ['code' => '6','message' => 'Force update found.'];
+                $this->response($message, REST_Controller::HTTP_OK);  
+            }else{
+                $message = ['code' => '7','message' => 'Simple update found.'];
+                $this->response($message, REST_Controller::HTTP_OK);  
+            }
+        }
+
+    }
+
 }
 ?>
