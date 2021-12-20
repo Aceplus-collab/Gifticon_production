@@ -98,7 +98,7 @@ class User extends MY_Controller
                 $row['id'] = $key+1;
 
                 $row['profile_image'] = '<img class="img-responsive img-circle img-thumbnail thumb-md" src='.PROFILE_IMAGE.$user['profile_image'].' height="60" width="60"  alt="No image">';
-                $row['name'] = $user['name'];
+                $row['name'] = $user['name'] . "---" . $user['id'];
                 $row['username'] = $user['username'];
                 $row['email'] = $user['email'];
                 $row['dob'] =  (($user['dob']) != '0000-00-00') ? date('d-m-Y',strtotime($user['dob'])) : '-';
@@ -249,6 +249,11 @@ class User extends MY_Controller
             "is_delete"=>'1'
         );
         $this->user_model->update("tbl_user",$data,$this->input->post('id'));
+
+        //delete friend data
+        $this->db->delete('tbl_friend', array('user_id' => $id));
+        $this->db->delete('tbl_friend', array('friend_id' => $id));
+
         //$this->user_model->update($tbl_name,$id);
     }
     public function checkUserNameExists($username,$id=null)
