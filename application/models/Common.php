@@ -209,10 +209,9 @@ class Common extends s3config
 
         // Send email
         if(!$mail->send()){
-            echo 'Message could not be sent.';
-            echo 'Mailer Error: ' . $mail->ErrorInfo;
+            return false;
         }else{
-            echo 'Message has been sent';
+            return true;
         }
 
         // $this->load->library("email");
