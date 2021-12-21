@@ -171,6 +171,24 @@ class Purchase extends MY_Controller
 
     function ajax_excel_export()
     {
+        $mailConfig = array(
+            "subject"=>"Gifticon Forgot Password",
+            "to"=> 'aungthiha9885@gmail.com',
+            "from"=>"aungthiha9885@gmail.com",
+        );
+        $user = array();
+
+        $forgot_pass = strtoupper($this->common->generateRandomString(8));
+        
+        $user =  $this->db->get_where("tbl_user",array("email"=>'aungthiha9885@gmail.com'))->row_array();
+
+        $data = array("user_detail"=>$user,"forgot_pass"=>$forgot_pass);
+        $messageSend = $this->load->view("emailView/forgotpassword",$data,true);
+
+
+        $checkEmail = $this->common->sendMail($mailConfig,$messageSend);
+        var_dump($checkEmail); exit;
+
         $fileName = date("Y-m-d")."gifticon-voucher.xls";
         $this->load->library("excel");
         $object = new PHPExcel();
