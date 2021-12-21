@@ -357,7 +357,7 @@ class User extends REST_Controller
 
                     if($is_success)
                     {
-                        $message = ["code"=>'1',"message"=>$updateData];
+                        $message = ["code"=>'1',"message"=>$this->lang->line("password_sent")];
                         $this->response($message,REST_Controller::HTTP_OK);
                     }
                     else

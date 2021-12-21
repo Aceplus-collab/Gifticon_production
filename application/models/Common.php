@@ -177,7 +177,7 @@ class Common extends s3config
         $mail->SMTPAuth = true;
         $mail->SMTPDebug = true;
         $mail->Username = "aungthiha9885@gmail.com";
-        $mail->Password = "aungthiha200052809798179261";
+        $mail->Password = "phippernaghtihvd";
         $mail->SMTPSecure = "ssl";
         $mail->Port     = 465;
 
