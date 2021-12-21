@@ -165,79 +165,80 @@ class Common extends s3config
    
     function sendMail($mailConfig,$message)
     {
+        // Load PHPMailer library
+        $this->load->library('phpmailer_lib');
 
-        // // Load PHPMailer library
-        // $this->load->library('phpmailer_lib');
+        // PHPMailer object
+        $mail = $this->phpmailer_lib->load();
 
-        // // PHPMailer object
-        // $mail = $this->phpmailer_lib->load();
+        // SMTP configuration
+        $mail->isSMTP();
+        $mail->Host     = "ssl://smtp.googlemail.com";
+        $mail->SMTPAuth = true;
+        $mail->SMTPDebug = true;
+        $mail->Username = "aungthiha9885@gmail.com";
+        $mail->Password = "aungthiha200052809798179261";
+        $mail->SMTPSecure = "ssl";
+        $mail->Port     = 465;
 
-        // // SMTP configuration
-        // $mail->isSMTP();
-        // $mail->Host     = 'smtp.example.com';
-        // $mail->SMTPAuth = true;
-        // $mail->Username = 'aungthiha9885@gmail.com';
-        // $mail->Password = 'aungthiha200052809798179261';
-        // $mail->SMTPSecure = 'ssl';
-        // $mail->Port     = 465;
+        // $config = Array(
+        //     'protocol' => 'smtp',
+        //     'smtp_host' => 'ssl://smtp.googlemail.com',
+        //     'smtp_port' => 465,
+        //     'smtp_user' => 'info@gifticonofficial.com', // phpsyshyperlink@gmail.com
+        //     'smtp_pass' => 'Rlatkddnjs9555!', // phpsys1122
+        //     'mailtype'  => 'html', 
+        //     'charset'   => 'iso-8859-1'
+        // );
 
-        // $mail->setFrom('info@example.com', 'CodexWorld');
-        // // $mail->addReplyTo('info@example.com', 'CodexWorld');
+        $mail->setFrom('aungthiha9885@gmail.com', $mailConfig['subject']);
+        // $mail->addReplyTo('info@example.com', 'CodexWorld');
 
-        // // Add a recipient
-        // // $mail->addAddress('john.doe@gmail.com');
+        // Add a recipient
+        $mail->addAddress($mailConfig['to']);
 
-        // // Add cc or bcc 
-        // // $mail->addCC('cc@example.com');
-        // // $mail->addBCC('bcc@example.com');
+        // Email subject
+        $mail->Subject = $mailConfig['subject'];
 
-        // // Email subject
-        // $mail->Subject = 'Send Email via SMTP using PHPMailer in CodeIgniter';
+        // Set email format to HTML
+        $mail->isHTML(true);
 
-        // // Set email format to HTML
-        // $mail->isHTML(true);
+        // Email body content
+        $mailContent = $message;
+        $mail->Body = $mailContent;
 
-        // // Email body content
-        // $mailContent = "<h1>Send HTML Email using SMTP in CodeIgniter</h1>
-        //     <p>This is a test email sending using SMTP mail server with PHPMailer.</p>";
-        // $mail->Body = $mailContent;
-
-        // // Send email
-        // if(!$mail->send()){
-        //     echo 'Message could not be sent.';
-        //     echo 'Mailer Error: ' . $mail->ErrorInfo;
-        // }else{
-        //     echo 'Message has been sent';
-        // }
-
-        // exit;
-
+        // Send email
+        if(!$mail->send()){
+            echo 'Message could not be sent.';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        }else{
+            echo 'Message has been sent';
+        }
 
         // $this->load->library("email");
-        $config = Array(
-            'protocol' => 'smtp',
-            'smtp_host' => 'ssl://smtp.googlemail.com',
-            'smtp_port' => 465,
-            'smtp_user' => 'aungthiha9885@gmail.com', // phpsyshyperlink@gmail.com
-            'smtp_pass' => 'aungthiha200052809798179261!', // phpsys1122
-            'mailtype'  => 'html', 
-            'charset'   => 'iso-8859-1'
-        );
-        $this->load->library('email', $config);
-        $this->email->set_newline("\r\n");
+        // $config = Array(
+        //     'protocol' => 'smtp',
+        //     'smtp_host' => 'ssl://smtp.googlemail.com',
+        //     'smtp_port' => 465,
+        //     'smtp_user' => 'info@gifticonofficial.com', // phpsyshyperlink@gmail.com
+        //     'smtp_pass' => 'Rlatkddnjs9555!', // phpsys1122
+        //     'mailtype'  => 'html', 
+        //     'charset'   => 'iso-8859-1'
+        // );
+        // $this->load->library('email', $config);
+        // $this->email->set_newline("\r\n");
         // $this->email->initialize($config);
-        $this->email->from($mailConfig['from'], $mailConfig['subject']);
-        $this->email->to($mailConfig['to']); // 
-        $this->email->subject($mailConfig['subject']);
+        // $this->email->from($mailConfig['from'], $mailConfig['subject']);
+        // $this->email->to($mailConfig['to']); // 
+        // $this->email->subject($mailConfig['subject']);
         // $this->email->set_header('MIME-Version', '1.0');
         // $this->email->set_header('X-Priority', '3');
-        $this->email->message($message);
-        if($this->email->send()){
-            
-        	return $this->email->print_debugger();
-        } else {
-        	return $this->email->print_debugger();
-        }
+        // $this->email->message($message);
+        // if($this->email->send()){
+        // 	return true;
+        // } else {
+        //     return false;
+        // }
     }
 	/*function sendMail($mailConfig,$message){
 
