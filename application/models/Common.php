@@ -175,7 +175,7 @@ class Common extends s3config
         $mail->isSMTP();
         $mail->Host     = "ssl://smtp.googlemail.com";
         $mail->SMTPAuth = true;
-        $mail->SMTPDebug = true;
+        $mail->SMTPDebug = false;
         $mail->Username = "aungthiha9885@gmail.com";
         $mail->Password = "phippernaghtihvd";
         $mail->SMTPSecure = "ssl";
