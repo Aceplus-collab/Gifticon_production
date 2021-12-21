@@ -213,30 +213,30 @@ class Common extends s3config
         // exit;
 
 
-        $this->load->library("email");
+        // $this->load->library("email");
         $config = Array(
             'protocol' => 'smtp',
             'smtp_host' => 'ssl://smtp.googlemail.com',
             'smtp_port' => 465,
             'smtp_user' => 'aungthiha9885@gmail.com', // phpsyshyperlink@gmail.com
-            'smtp_pass' => '!', // phpsys1122
-            'smtp_crypto'  => 'tls', 
+            'smtp_pass' => 'aungthiha200052809798179261!', // phpsys1122
             'mailtype'  => 'html', 
             'charset'   => 'iso-8859-1'
         );
         $this->load->library('email', $config);
         $this->email->set_newline("\r\n");
-        $this->email->initialize($config);
+        // $this->email->initialize($config);
         $this->email->from($mailConfig['from'], $mailConfig['subject']);
         $this->email->to($mailConfig['to']); // 
         $this->email->subject($mailConfig['subject']);
-        $this->email->set_header('MIME-Version', '1.0');
-        $this->email->set_header('X-Priority', '3');
+        // $this->email->set_header('MIME-Version', '1.0');
+        // $this->email->set_header('X-Priority', '3');
         $this->email->message($message);
         if($this->email->send()){
-        	return true;
+            
+        	return $this->email->print_debugger();
         } else {
-            return false;
+        	return $this->email->print_debugger();
         }
     }
 	/*function sendMail($mailConfig,$message){
