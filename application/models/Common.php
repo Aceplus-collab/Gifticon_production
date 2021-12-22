@@ -176,8 +176,8 @@ class Common extends s3config
         $mail->Host     = "ssl://smtp.googlemail.com";
         $mail->SMTPAuth = true;
         $mail->SMTPDebug = false;
-        $mail->Username = "aungthiha9885@gmail.com";
-        $mail->Password = "phippernaghtihvd";
+        $mail->Username = "info@gifticonofficial.com";
+        $mail->Password = "Rlatkddnjs95";
         $mail->SMTPSecure = "ssl";
         $mail->Port     = 465;
 
@@ -191,7 +191,7 @@ class Common extends s3config
         //     'charset'   => 'iso-8859-1'
         // );
 
-        $mail->setFrom('aungthiha9885@gmail.com', $mailConfig['subject']);
+        $mail->setFrom('info@gifticonofficial.com', $mailConfig['subject']);
         // $mail->addReplyTo('info@example.com', 'CodexWorld');
 
         // Add a recipient
