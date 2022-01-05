@@ -2464,12 +2464,12 @@ class User extends REST_Controller
                             $loop_data[$key]['qry_remaining'] = $this->User_model->qtyRemaing($loopvalue['gift_id']);
                             $loop_data[$key]['product_name'] = $gift['name'];
                         }else{
-                            $loop_data[$key]['qry_remaining'] = "";
+                            $loop_data[$key]['qry_remaining'] = 0;
                             $loop_data[$key]['product_name'] = $gift['name'];
                         }
                     }else{
                         //if wincube check_goods.do response fail
-                        $loop_data[$key]['qry_remaining'] = "";
+                        $loop_data[$key]['qry_remaining'] = 0;
                         $loop_data[$key]['product_name'] = $gift['name'];
                     }
 
