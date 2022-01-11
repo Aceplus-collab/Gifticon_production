@@ -887,7 +887,91 @@ class Gift extends MY_Controller{
         var_dump($voucher_issue_result);
     }
 
-    
+    function wincubeDataGoodsSync()
+    {
+        $data = file_get_contents(__DIR__.'/SampleJson.json');
+        $goods = json_decode($data, true);
+        // var_dump($obj[0]);
+
+        
+        // $this->output->set_content_type('json');
+
+        // $goods = json_decode($this->input->raw_input_stream, true);
+
+        // Extract brands from WinCube products
+        $brands = array_unique(array_column($goods, 'affiliate'));
+
+        // Find already-imported WinCube brands
+        $query = $this->db->get_where('tbl_businesses', ['source' => 'wincube']);
+        $existing_brands = $query->result_array();
+        $existing_brands_id_map = array_combine(
+            array_column($existing_brands, 'name'),
+            array_column($existing_brands, 'id')
+        );
+
+        // Insert new WinCube brands
+        $new_brands = array_values(array_diff($brands, array_column($existing_brands, 'name')));
+        $new_brands_id_map = [];
+        if (count($new_brands) > 0) {
+            $new_brands_rows = array_map(function ($name) {
+                return [
+                    'name' => $name,
+                    'source' => 'wincube',
+                    'image' => 'default.png'
+                ];
+            }, $new_brands);
+            $this->db->insert_batch('tbl_businesses', $new_brands_rows);
+
+            $start_id = $this->db->insert_id();
+            $inserted_ids = range($start_id, $start_id + count($new_brands) - 1);
+            $new_brands_id_map = array_combine($new_brands, $inserted_ids);
+
+            $new_brand_country_links = array_map(function ($brand_id) {
+                return [
+                    'business_id' => $brand_id,
+                    'gift_country_id' => 3
+                ];
+            }, $inserted_ids);
+            $this->db->insert_batch('tbl_business_country', $new_brand_country_links);
+        }
+        $brands_id_map = array_merge($existing_brands_id_map, $new_brands_id_map);
+
+        // Find already-imported WinCube products
+        $query = $this->db
+            ->from('tbl_gifticons')
+            ->where_in('wincube_id', array_column($goods, 'goods_id'))
+            ->get();
+        $existing_goods = $query->result_array();
+
+        // Insert new products with brand IDs
+        $existing_goods_ids = array_column($existing_goods, 'wincube_id');
+        $new_goods = array_filter($goods, function ($item) use ($existing_goods_ids) {
+            return !in_array($item['goods_id'], $existing_goods_ids);
+        });
+        // echo json_encode(['existing_brands' => $existing_brands, 'new_brands' => $new_brands]); return;
+        $new_goods_to_insert = array_map(function ($item) use ($brands_id_map) {
+            return [
+                'name' => $item['goods_nm'],
+                'image' => 'default.png',
+                'business_id' => (int)$brands_id_map[$item['affiliate']],
+                'wincube_id' => $item['goods_id'],
+                'wincube_image' => $item['goods_img'],
+                'terms' => "xxxx",
+                'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
+                'coupon_price' => $item['total_price'],
+                'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
+                'update_date' => date('Y-m-d h:i:s')
+            ];
+        }, $new_goods);
+
+        $this->db->db_debug = true;
+        
+        print_r($new_goods_to_insert);
+
+        $this->db->insert_batch('tbl_gifticons', $new_goods_to_insert);
+        echo json_encode(['affected_rows' => $this->db->affected_rows()]);
+
+    }
 
 }
 ?>

@@ -56,6 +56,7 @@
                                                 <div id="toolbar">
                                                     <a href="<?php echo site_url('admin/gift/add');?>" class="btn btn-default waves-effect waves-light"><i class="fa fa-plus"></i> Add</a>
                                                     <a href="<?= site_url('admin/gift/add_wincube');?>" class="btn btn-purple waves-effect waves-light m-l-5"><i class="fa fa-plus"></i> Import from WinCube</a>
+                                                    <a href="#" class="btn btn-purple waves-effect waves-light m-l-5 sync-wincube-btn"><i class="fa fa-plus"></i> Sync Wincube</a>
                                                 </div>
 
                                                 <table id="category_table" data-toggle="table"
@@ -196,7 +197,19 @@
                         }
                     });
                 })
+
+                $(document).on('click', '.sync-wincube-btn', function(){
+                    $.ajax({
+                        type:"GET",
+                        url:"<?php echo base_url();?>admin/gift/wincubeDataGoodsSync",
+                        success:function(data){
+                            let res = JSON.parse(data);
+                            console.log(res, 'res')
+                        }
+                    });
+                })
             });
+            
         </script>
         
     </body>

@@ -19,12 +19,12 @@ date_default_timezone_set('UTC');
 | to $_SERVER['SERVER_ADDR'] if available, or localhost otherwise.
 | The auto-detection mechanism exists only for convenience during
 | development and MUST NOT be used in production!
-|
+5
 | If you need to allow multiple domains, remember that this file is still
 | a PHP script and you can easily do that on your own.
 |
 */
-$root_path  = "http://128.199.215.44:8087/";
+$root_path  = "http://127.0.0.1:8086/";
 $root_path .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
 $config['base_url']	= $root_path;
 
