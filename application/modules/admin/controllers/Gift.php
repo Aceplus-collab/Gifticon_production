@@ -174,7 +174,6 @@ class Gift extends MY_Controller{
         $this->load->view('gift/add_gift',$data);
     }
 
-
     function add_wincube()
     {
     	$data['page'] = "gift";
@@ -901,6 +900,9 @@ class Gift extends MY_Controller{
         // Extract brands from WinCube products
         $brands = array_unique(array_column($goods, 'affiliate'));
 
+        // var_dump(count($goods));
+        // exit;
+
         // Find already-imported WinCube brands
         $query = $this->db->get_where('tbl_businesses', ['source' => 'wincube']);
         $existing_brands = $query->result_array();
@@ -909,8 +911,15 @@ class Gift extends MY_Controller{
             array_column($existing_brands, 'id')
         );
 
+        // var_dump($existing_brands_id_map);
+        // exit;
+
         // Insert new WinCube brands
         $new_brands = array_values(array_diff($brands, array_column($existing_brands, 'name')));
+
+        // var_dump($new_brands);
+        // exit;
+
         $new_brands_id_map = [];
         if (count($new_brands) > 0) {
             $new_brands_rows = array_map(function ($name) {
@@ -935,6 +944,9 @@ class Gift extends MY_Controller{
             $this->db->insert_batch('tbl_business_country', $new_brand_country_links);
         }
         $brands_id_map = array_merge($existing_brands_id_map, $new_brands_id_map);
+        
+        // var_dump($brands_id_map);
+        // exit;
 
         // Find already-imported WinCube products
         $query = $this->db
@@ -943,33 +955,92 @@ class Gift extends MY_Controller{
             ->get();
         $existing_goods = $query->result_array();
 
+
+        // var_dump($existing_goods);
+        // exit;
+
         // Insert new products with brand IDs
         $existing_goods_ids = array_column($existing_goods, 'wincube_id');
+        
+
+        // var_dump($goods);
+        // exit;
+
         $new_goods = array_filter($goods, function ($item) use ($existing_goods_ids) {
             return !in_array($item['goods_id'], $existing_goods_ids);
         });
+
+        // var_dump(count($new_goods));
+        // exit;
+
+        $existing_good_datas = array_filter($goods, function ($item) use ($existing_goods_ids) {
+            return in_array($item['goods_id'], $existing_goods_ids);
+        });
+
+        // var_dump(count($existing_good_datas));
+        // exit;
+
+        if(count($new_goods) > 0)
+        {
+            $new_goods_to_insert = array_map(function ($item) use ($brands_id_map) {
+                return [
+                    'name' => $item['goods_nm'],
+                    'image' => 'default.png',
+                    'business_id' => (int)$brands_id_map[$item['affiliate']],
+                    'wincube_id' => $item['goods_id'],
+                    'wincube_image' => $item['goods_img'],
+                    'terms' => "new_item",
+                    'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
+                    'coupon_price' => $item['total_price'],
+                    'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
+                    // 'update_date' => date('Y-m-d h:i:s')
+                ];
+            }, $new_goods);
+            $this->db->db_debug = true;
+            $this->db->insert_batch('tbl_gifticons', $new_goods_to_insert);
+            echo json_encode(['affected_rows new' => $this->db->affected_rows()]);
+        }
+
+        if(count($existing_good_datas) > 0)
+        {
+            $existing_goods_to_insert = array_map(function ($item) use ($brands_id_map) {
+                return [
+                    'name' => $item['goods_nm'],
+                    'image' => 'default.png',
+                    'business_id' => (int)$brands_id_map[$item['affiliate']],
+                    'wincube_id' => $item['goods_id'],
+                    'wincube_image' => $item['goods_img'],
+                    'terms' => "ex_item",
+                    'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
+                    'coupon_price' => $item['total_price'],
+                    'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
+                    // 'update_date' => date('Y-m-d h:i:s')
+                ];
+            }, $existing_good_datas);
+            $this->db->db_debug = true;
+            $this->db->update_batch('tbl_gifticons', $existing_goods_to_insert, 'wincube_id');
+            echo json_encode(['affected_rows existing' => $this->db->affected_rows()]);
+        }
+
         // echo json_encode(['existing_brands' => $existing_brands, 'new_brands' => $new_brands]); return;
-        $new_goods_to_insert = array_map(function ($item) use ($brands_id_map) {
-            return [
-                'name' => $item['goods_nm'],
-                'image' => 'default.png',
-                'business_id' => (int)$brands_id_map[$item['affiliate']],
-                'wincube_id' => $item['goods_id'],
-                'wincube_image' => $item['goods_img'],
-                'terms' => "xxxx",
-                'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
-                'coupon_price' => $item['total_price'],
-                'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
-                'update_date' => date('Y-m-d h:i:s')
-            ];
-        }, $new_goods);
 
-        $this->db->db_debug = true;
+        // var_dump(count($new_goods_to_insert));
+        // exit;
+
+
+        // var_dump($new_goods_to_insert);
+        // exit;
         
-        print_r($new_goods_to_insert);
+        // if(!count($new_goods_to_insert) == 0)
+        // {
 
-        $this->db->insert_batch('tbl_gifticons', $new_goods_to_insert);
-        echo json_encode(['affected_rows' => $this->db->affected_rows()]);
+
+        // if($this->db->affected_rows() > 0)
+        // {
+        //     echo json_encode(['affected_rows' => $this->db->affected_rows()]);
+        // }else{
+        //     echo $this->ci->db->_error_message();
+        // }
 
     }
 
