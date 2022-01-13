@@ -914,9 +914,6 @@ class Gift extends MY_Controller{
             }, $goods);
             $data = $goods_with_img;
 
-            var_dump($data);
-            exit;
-
         }elseif($testData == "")
         {
             $data = file_get_contents(__DIR__.'/SampleJson.json');
