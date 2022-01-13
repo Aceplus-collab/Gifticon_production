@@ -913,15 +913,17 @@ class Gift extends MY_Controller{
                 ]);
             }, $goods);
             $data = $goods_with_img;
+            $goods = $data;
 
         }elseif($testData == "")
         {
             $data = file_get_contents(__DIR__.'/SampleJson.json');
+            $goods = json_decode($data, true);
         }
         else{
             $data = $testData;
+            $goods = json_decode($data, true);
         }
-        $goods = json_decode($data, true);
         // $this->output->set_content_type('json');
 
         // $goods = json_decode($this->input->raw_input_stream, true);
