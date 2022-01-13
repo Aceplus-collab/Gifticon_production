@@ -1001,7 +1001,7 @@ class Gift extends MY_Controller{
                     'is_active' => 0,
                     'is_delete' => 0,
                     'terms' => "out_stock",
-                    // 'update_date' => date('Y-m-d h:i:s')
+                    'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $not_included_goods);
             $this->db->update_batch('tbl_gifticons', $not_included_goods_to_update, 'wincube_id');
@@ -1024,7 +1024,7 @@ class Gift extends MY_Controller{
                     'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
                     'coupon_price' => $item['total_price'],
                     'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
-                    // 'update_date' => date('Y-m-d h:i:s')
+                    'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $new_goods);
             $this->db->db_debug = true;
@@ -1045,7 +1045,7 @@ class Gift extends MY_Controller{
                     'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
                     'coupon_price' => $item['total_price'],
                     'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
-                    // 'update_date' => date('Y-m-d h:i:s')
+                    'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $existing_good_datas);
             $this->db->db_debug = true;
