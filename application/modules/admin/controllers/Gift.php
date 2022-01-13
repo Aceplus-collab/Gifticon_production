@@ -888,20 +888,49 @@ class Gift extends MY_Controller{
 
     function wincubeDataGoodsSync()
     {
-        $data = file_get_contents(__DIR__.'/SampleJson.json');
-        $goods = json_decode($data, true);
-        // var_dump($obj[0]);
+    	$testData=$_POST['testData'];
 
-        
+        if($testData == "Wincube_test")
+        {
+            $this->output->set_content_type('json');
+    
+            $client = new GuzzleHttp\Client();
+            $res = $client->request('POST', WINCUBE_API_BASE . 'salelist.do', [
+                'query' => [
+                    'mdcode' => 'gifticon_nz',
+                    'response_type' => 'JSON'
+                ]
+            ]);
+            $body = mb_convert_encoding($res->getBody(), 'UTF-8', 'EUC-KR');
+            $goods = json_decode($body, true)['goods_list'];
+            if (empty($goods)) {
+                echo json_encode(['message' => 'Something was wrong querying WinCube', 'wincube_response' => $body]);
+                die;
+            }
+            $goods_with_img = array_map(function ($item) {
+                return array_merge($item, [
+                    'goods_img_html' => "<img class='img-responsive img-circle img-thumbnail thumb-md' src='{$item['goods_img']}' height='60' width='60'>"
+                ]);
+            }, $goods);
+            $data = $goods_with_img;
+
+            var_dump($data);
+            exit;
+
+        }elseif($testData == "")
+        {
+            $data = file_get_contents(__DIR__.'/SampleJson.json');
+        }
+        else{
+            $data = $testData;
+        }
+        $goods = json_decode($data, true);
         // $this->output->set_content_type('json');
 
         // $goods = json_decode($this->input->raw_input_stream, true);
 
         // Extract brands from WinCube products
         $brands = array_unique(array_column($goods, 'affiliate'));
-
-        // var_dump(count($goods));
-        // exit;
 
         // Find already-imported WinCube brands
         $query = $this->db->get_where('tbl_businesses', ['source' => 'wincube']);
@@ -911,14 +940,8 @@ class Gift extends MY_Controller{
             array_column($existing_brands, 'id')
         );
 
-        // var_dump($existing_brands_id_map);
-        // exit;
-
         // Insert new WinCube brands
         $new_brands = array_values(array_diff($brands, array_column($existing_brands, 'name')));
-
-        // var_dump($new_brands);
-        // exit;
 
         $new_brands_id_map = [];
         if (count($new_brands) > 0) {
@@ -944,9 +967,6 @@ class Gift extends MY_Controller{
             $this->db->insert_batch('tbl_business_country', $new_brand_country_links);
         }
         $brands_id_map = array_merge($existing_brands_id_map, $new_brands_id_map);
-        
-        // var_dump($brands_id_map);
-        // exit;
 
         // Find already-imported WinCube products
         $query = $this->db
@@ -955,30 +975,41 @@ class Gift extends MY_Controller{
             ->get();
         $existing_goods = $query->result_array();
 
-
-        // var_dump($existing_goods);
-        // exit;
-
         // Insert new products with brand IDs
         $existing_goods_ids = array_column($existing_goods, 'wincube_id');
-        
-
-        // var_dump($goods);
-        // exit;
 
         $new_goods = array_filter($goods, function ($item) use ($existing_goods_ids) {
             return !in_array($item['goods_id'], $existing_goods_ids);
         });
 
-        // var_dump(count($new_goods));
-        // exit;
+        $query = $this->db
+        ->from('tbl_gifticons')
+        ->select('wincube_id')
+        ->where('wincube_id is NOT NULL', NULL, FALSE)
+        ->get();
+        $all_existing_goods = $query->result_array();
+        $all_existing_good_ids = array_column($all_existing_goods, 'wincube_id');
+        $import_good_ids = array_column($goods, 'goods_id');
+        $not_included_goods = array_diff($all_existing_good_ids, $import_good_ids);
+
+        //update out of stock items
+        if(count($not_included_goods) > 0)
+        {
+            $not_included_goods_to_update = array_map(function ($item) {
+                return [
+                    'wincube_id' => $item,
+                    'is_active' => 0,
+                    'is_delete' => 0,
+                    'terms' => "out_stock",
+                    // 'update_date' => date('Y-m-d h:i:s')
+                ];
+            }, $not_included_goods);
+            $this->db->update_batch('tbl_gifticons', $not_included_goods_to_update, 'wincube_id');
+        }
 
         $existing_good_datas = array_filter($goods, function ($item) use ($existing_goods_ids) {
             return in_array($item['goods_id'], $existing_goods_ids);
         });
-
-        // var_dump(count($existing_good_datas));
-        // exit;
 
         if(count($new_goods) > 0)
         {
@@ -998,7 +1029,7 @@ class Gift extends MY_Controller{
             }, $new_goods);
             $this->db->db_debug = true;
             $this->db->insert_batch('tbl_gifticons', $new_goods_to_insert);
-            echo json_encode(['affected_rows new' => $this->db->affected_rows()]);
+            // echo json_encode(['affected_rows new' => $this->db->affected_rows()]);
         }
 
         if(count($existing_good_datas) > 0)
@@ -1019,28 +1050,19 @@ class Gift extends MY_Controller{
             }, $existing_good_datas);
             $this->db->db_debug = true;
             $this->db->update_batch('tbl_gifticons', $existing_goods_to_insert, 'wincube_id');
-            echo json_encode(['affected_rows existing' => $this->db->affected_rows()]);
+            // echo json_encode(['affected_rows existing' => $this->db->affected_rows()]);
         }
 
-        // echo json_encode(['existing_brands' => $existing_brands, 'new_brands' => $new_brands]); return;
+        // echo "existing_goods_to_insert" . count($existing_goods_to_insert);
+        // echo "new_goods" . count($new_goods);
+        // echo "not_included_goods" . count($not_included_goods);
 
-        // var_dump(count($new_goods_to_insert));
-        // exit;
-
-
-        // var_dump($new_goods_to_insert);
-        // exit;
         
-        // if(!count($new_goods_to_insert) == 0)
-        // {
-
-
-        // if($this->db->affected_rows() > 0)
-        // {
-        //     echo json_encode(['affected_rows' => $this->db->affected_rows()]);
-        // }else{
-        //     echo $this->ci->db->_error_message();
-        // }
+        echo json_encode([
+            'existing_goods_to_insert' => count($existing_goods_to_insert),
+            'new_goods' => count($new_goods),
+            'not_included_goods' => count($not_included_goods),
+        ]);
 
     }
 

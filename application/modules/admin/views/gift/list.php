@@ -51,6 +51,16 @@
                                             echo '<br><div class="alert alert-success">'.$this->session->flashdata('suc').'</div>'; 
                                         } ?>
 	                        			<!--===================================================-->
+
+                                        <!-- testing for wincube  -->
+                                        <div>
+                                        <p>Import Wincube data for Testing</p>
+                                        <textarea id="test_wincube"></textarea>
+                                        <br/>
+                                        <input type="submit" class="btn_wincube_test" value="Import Wicube" />
+                                        </div>
+                                        <!-- testing for wincube  -->
+
                                         <div class="p-20">
                                             <div class="table-responsive">
                                                 <div id="toolbar">
@@ -200,8 +210,22 @@
 
                 $(document).on('click', '.sync-wincube-btn', function(){
                     $.ajax({
-                        type:"GET",
+                        type:"POST",
                         url:"<?php echo base_url();?>admin/gift/wincubeDataGoodsSync",
+                        data: {"testData": "Wincube_test"},
+                        success:function(data){
+                            let res = JSON.parse(data);
+                            console.log(res, 'res')
+                        }
+                    });
+                })
+
+                $(document).on('click', '.btn_wincube_test', function(){
+                    let data = $('#test_wincube').val()
+                    $.ajax({
+                        type:"POST",
+                        url:"<?php echo base_url();?>admin/gift/wincubeDataGoodsSync",
+                        data: {"testData": data},
                         success:function(data){
                             let res = JSON.parse(data);
                             console.log(res, 'res')
