@@ -998,7 +998,6 @@ class Gift extends MY_Controller{
                 return [
                     'wincube_id' => $item,
                     'is_active' => 0,
-                    'is_delete' => 0,
                     'terms' => "out_stock",
                     'update_date' => date('Y-m-d h:i:s')
                 ];
@@ -1022,6 +1021,7 @@ class Gift extends MY_Controller{
                     'terms' => "new_item",
                     'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
                     'coupon_price' => $item['total_price'],
+                    'is_active' => 1,
                     'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
                     'update_date' => date('Y-m-d h:i:s')
                 ];
@@ -1043,6 +1043,7 @@ class Gift extends MY_Controller{
                     'terms' => "ex_item",
                     'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
                     'coupon_price' => $item['total_price'],
+                    'is_active' => 1,
                     'sale_end_date' => date_format(date_create($item['period_end']), 'Y-m-d'),
                     'update_date' => date('Y-m-d h:i:s')
                 ];
