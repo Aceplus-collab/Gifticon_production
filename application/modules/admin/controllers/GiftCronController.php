@@ -129,7 +129,6 @@ class GiftCronController extends CI_Controller{
                 return [
                     'wincube_id' => $item,
                     'is_active' => 0,
-                    'terms' => $item['desc'],
                     'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $not_included_goods);
