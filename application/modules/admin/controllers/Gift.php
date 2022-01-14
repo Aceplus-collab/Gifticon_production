@@ -941,6 +941,7 @@ class Gift extends MY_Controller{
         $query = $this->db
             ->from('tbl_businesses')
             ->where_in('name', $brands)
+            ->where('source', 'wincube')
             ->get();
         $existing_brand_list = $query->result_array();
 
@@ -949,6 +950,7 @@ class Gift extends MY_Controller{
             $existing_brands_rows = array_map(function ($name) {
                 return [
                     'id' => $name['id'],
+                    'source' => 'wincube',
                     'is_active' => 0,
                     'update_date' => date('Y-m-d h:i:s')
                 ];
