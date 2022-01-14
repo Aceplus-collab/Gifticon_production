@@ -176,6 +176,8 @@ class Brand extends MY_Controller{
 
                 $row['sequence'] = $category['sequence'];
 
+                $row['update_date'] = $category['update_date'];
+
                 $row['purchased'] = '&nbsp;&nbsp;<a href='.base_url('admin/brand/purchased/').$category['id'].' class="btn btn-sm btn-primary" title="History">Purchase</i></a>';
 
                 if($category['is_active']==='1'){
