@@ -102,6 +102,7 @@ class Gift extends MY_Controller{
                 $row['normal_price'] = $category['normal_price'];
 
                 $row['coupon_price'] = $category['coupon_price'];
+                $row['update_date'] = $category['update_date'];
 
                 $row['sale_start_date'] = $category['sale_start_date'];
 
@@ -924,9 +925,6 @@ class Gift extends MY_Controller{
             $data = $testData;
             $goods = json_decode($data, true);
         }
-        // $this->output->set_content_type('json');
-
-        // $goods = json_decode($this->input->raw_input_stream, true);
 
         // Extract brands from WinCube products
         $brands = array_unique(array_column($goods, 'affiliate'));
@@ -939,6 +937,27 @@ class Gift extends MY_Controller{
             array_column($existing_brands, 'id')
         );
 
+        //Find already imported brands list
+        $query = $this->db
+            ->from('tbl_businesses')
+            ->where_in('name', $brands)
+            ->get();
+        $existing_brand_list = $query->result_array();
+
+        if(count($existing_brand_list) > 0)
+        {
+            $existing_brands_rows = array_map(function ($name) {
+                return [
+                    'id' => $name['id'],
+                    'is_active' => 0,
+                    'update_date' => date('Y-m-d h:i:s')
+                ];
+            }, $existing_brand_list);
+
+            $this->db->db_debug = true;
+            $this->db->update_batch('tbl_businesses', $existing_brands_rows, 'id');
+        }
+
         // Insert new WinCube brands
         $new_brands = array_values(array_diff($brands, array_column($existing_brands, 'name')));
 
@@ -948,7 +967,9 @@ class Gift extends MY_Controller{
                 return [
                     'name' => $name,
                     'source' => 'wincube',
-                    'image' => 'default.png'
+                    'image' => 'default.png',
+                    'is_active' => 0,
+                    'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $new_brands);
             $this->db->insert_batch('tbl_businesses', $new_brands_rows);
@@ -965,6 +986,28 @@ class Gift extends MY_Controller{
             }, $inserted_ids);
             $this->db->insert_batch('tbl_business_country', $new_brand_country_links);
         }
+
+        ///////////////////////////////////
+
+        //not included brand list
+        $not_included_brands = array_diff(array_column($existing_brands, 'name'), $brands);
+        
+        if(count($not_included_brands) > 0)
+        {
+            $not_included_brands_update_row = array_map(function ($name) {
+                return [
+                    'name' => $name,
+                    'is_active' => 1,
+                    'update_date' => date('Y-m-d h:i:s')
+                ];
+            }, $not_included_brands);
+
+            $this->db->db_debug = true;
+            $this->db->update_batch('tbl_businesses', $not_included_brands_update_row, 'name');
+        }
+
+        ///////////////////////////////////
+
         $brands_id_map = array_merge($existing_brands_id_map, $new_brands_id_map);
 
         // Find already-imported WinCube products
@@ -1059,9 +1102,12 @@ class Gift extends MY_Controller{
 
         
         echo json_encode([
-            'existing_goods_to_insert' => count($existing_goods_to_insert),
             'new_goods' => count($new_goods),
+            'existing_goods_to_insert' => count($existing_goods_to_insert),
             'not_included_goods' => count($not_included_goods),
+            'new_brands' => count($new_brands),
+            'not_included_brands' => count($not_included_brands),
+            'existing_brand_list' => count($existing_brand_list)
         ]);
 
     }

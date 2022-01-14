@@ -120,6 +120,8 @@
                                                             
                                                             <th  data-field="is_active" data-sortable="true" class="text-center"> Status </th>
                                                             
+                                                            <th  data-field="update_date" data-sortable="true" class="text-center"> Update Date </th>
+                                                            
                                                             <th  data-field="action" data-align="center" data-sortable="true" class="text-center"> Action </th>
                                                         </tr>
                                                     </thead>
