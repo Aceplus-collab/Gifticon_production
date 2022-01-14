@@ -20,65 +20,70 @@ class Purchase_model extends MY_Model
         {
             $data = array();
             foreach ($query->result_array() as $key => $value) {
-                $userdata = $this->db->get_where('tbl_user',array('id'=>$value['user_id']))->row_array();
-                $businessdata = $this->db->get_where('tbl_businesses',array('id'=>$value['business_id']))->row_array();
-                $gifticonsdata = $this->db->get_where('tbl_gifticons',array('id'=>$value['gifticon_id']))->row_array();
-
-                $gifticonsCountryRelation = $this->db->get_where('tbl_business_country',array('business_id'=>$value['business_id']))->result_array();
-                $countryList = array();
-                if($gifticonsCountryRelation)
+                if($value['user_id'] != 0)
                 {
-                    foreach ($gifticonsCountryRelation as $key => $v) {
-                        $country = $this->db->get_where('tbl_gift_country',array('id'=>$v['gift_country_id']))->row_array();
-                        $countryList[] = $country['name'];
-                    }   
-                }
-                $value['username'] = $userdata['username'];
-                $value['country'] = implode(", ",$countryList);
-                $value['purchase_id'] = $value['purchase_id'];
 
-                $value['business_name'] = $businessdata['username'];
-
-                $value['gift_name'] = $gifticonsdata['name'];
-                $value['gift_image'] = $gifticonsdata['image'];
-                $value['wincube_id'] = $gifticonsdata['wincube_id'];
-                $value['voucher_status'] = $value['voucher_status'];
-                
-                //check korea item or not
-                // if($gifticonsdata['wincube_id'] != null)
-                // {
-                //     $ex_rate = number_format((float)($value['price'] / $exchange_rate['rate']), 2, '.', '');
-                //     $value['price'] = $ex_rate;
-                // }else{
-                //     $value['price'] = $value['price'];
-                // }
-
-                if($value['giftto_user_id'] != 0)
-                {
-                    $utodata = $this->db->get_where('tbl_user',array('id'=>$value['giftto_user_id']))->row_array();
-                    if($utodata)
+                    $userdata = $this->db->get_where('tbl_user',array('id'=>$value['user_id']))->row_array();
+                    $businessdata = $this->db->get_where('tbl_businesses',array('id'=>$value['business_id']))->row_array();
+                    $gifticonsdata = $this->db->get_where('tbl_gifticons',array('id'=>$value['gifticon_id']))->row_array();
+    
+                    $gifticonsCountryRelation = $this->db->get_where('tbl_business_country',array('business_id'=>$value['business_id']))->result_array();
+                    $countryList = array();
+                    if($gifticonsCountryRelation)
                     {
-                        $value['giftto_user_name'] = $utodata['username'];
+                        foreach ($gifticonsCountryRelation as $key => $v) {
+                            $country = $this->db->get_where('tbl_gift_country',array('id'=>$v['gift_country_id']))->row_array();
+                            $countryList[] = $country['name'];
+                        }   
+                    }
+    
+                    $value['username'] = isset($userdata['username']) ? $userdata['username'] : '';
+                    $value['country'] = implode(", ",$countryList);
+                    $value['purchase_id'] = $value['purchase_id'];
+    
+                    $value['business_name'] = isset($businessdata['username']) ? $businessdata['username'] : '';
+    
+                    $value['gift_name'] = isset($gifticonsdata['name']) ? $gifticonsdata['name'] : '';
+                    $value['gift_image'] = isset($gifticonsdata['image']) ? $gifticonsdata['image'] : '';
+                    $value['wincube_id'] = isset($gifticonsdata['wincube_id']) ? $gifticonsdata['wincube_id'] : '';
+                    $value['voucher_status'] = $value['voucher_status'];
+                    
+                    //check korea item or not
+                    // if($gifticonsdata['wincube_id'] != null)
+                    // {
+                    //     $ex_rate = number_format((float)($value['price'] / $exchange_rate['rate']), 2, '.', '');
+                    //     $value['price'] = $ex_rate;
+                    // }else{
+                    //     $value['price'] = $value['price'];
+                    // }
+    
+                    if($value['giftto_user_id'] != 0)
+                    {
+                        $utodata = $this->db->get_where('tbl_user',array('id'=>$value['giftto_user_id']))->row_array();
+                        if($utodata)
+                        {
+                            $value['giftto_user_name'] = $utodata['username'];
+                        }else{
+                            $value['giftto_user_name'] = '-';
+                        }
                     }else{
                         $value['giftto_user_name'] = '-';
                     }
-                }else{
-                    $value['giftto_user_name'] = '-';
-                }
-
-                if($value['gift_from_user_id'] != 0)
-                {
-                    $ufromdata = $this->db->get_where('tbl_user',array('id'=>$value['gift_from_user_id']))->row_array();
-                    if($ufromdata)
+    
+                    if($value['gift_from_user_id'] != 0)
                     {
-                        $value['giftfrom_user_name'] = $ufromdata['username'];
+                        $ufromdata = $this->db->get_where('tbl_user',array('id'=>$value['gift_from_user_id']))->row_array();
+                        if($ufromdata)
+                        {
+                            $value['giftfrom_user_name'] = $ufromdata['username'];
+                        }else{
+                            $value['giftfrom_user_name'] = '-';
+                        }
                     }else{
                         $value['giftfrom_user_name'] = '-';
-                    }
-                }else{
-                    $value['giftfrom_user_name'] = '-';
-                };
-                $data[] = $value;
+                    };
+                    $data[] = $value;
+                }
             }
 
             return $data;
