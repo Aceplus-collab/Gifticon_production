@@ -951,7 +951,7 @@ class Gift extends MY_Controller{
                 return [
                     'id' => $name['id'],
                     'source' => 'wincube',
-                    'is_active' => 0,
+                    'is_active' => 1,
                     'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $existing_brand_list);
@@ -970,7 +970,7 @@ class Gift extends MY_Controller{
                     'name' => $name,
                     'source' => 'wincube',
                     'image' => 'default.png',
-                    'is_active' => 0,
+                    'is_active' => 1,
                     'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $new_brands);
@@ -999,7 +999,7 @@ class Gift extends MY_Controller{
             $not_included_brands_update_row = array_map(function ($name) {
                 return [
                     'name' => $name,
-                    'is_active' => 1,
+                    'is_active' => 0,
                     'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $not_included_brands);
