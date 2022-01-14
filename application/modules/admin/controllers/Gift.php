@@ -951,7 +951,6 @@ class Gift extends MY_Controller{
                 return [
                     'id' => $name['id'],
                     'source' => 'wincube',
-                    'is_active' => 1,
                     'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $existing_brand_list);
@@ -989,26 +988,6 @@ class Gift extends MY_Controller{
             $this->db->insert_batch('tbl_business_country', $new_brand_country_links);
         }
 
-        ///////////////////////////////////
-
-        //not included brand list
-        // $not_included_brands = array_diff(array_column($existing_brands, 'name'), $brands);        
-        // if(count($not_included_brands) > 0)
-        // {
-        //     $not_included_brands_update_row = array_map(function ($name) {
-        //         return [
-        //             'name' => $name,
-        //             'is_active' => 0,
-        //             'update_date' => date('Y-m-d h:i:s')
-        //         ];
-        //     }, $not_included_brands);
-
-        //     $this->db->db_debug = true;
-        //     $this->db->update_batch('tbl_businesses', $not_included_brands_update_row, 'name');
-        // }
-
-        ///////////////////////////////////
-
         $brands_id_map = array_merge($existing_brands_id_map, $new_brands_id_map);
 
         // Find already-imported WinCube products
@@ -1042,7 +1021,7 @@ class Gift extends MY_Controller{
                 return [
                     'wincube_id' => $item,
                     'is_active' => 0,
-                    'terms' => "out_stock",
+                    'terms' => $item['desc'],
                     'update_date' => date('Y-m-d h:i:s')
                 ];
             }, $not_included_goods);
@@ -1053,6 +1032,7 @@ class Gift extends MY_Controller{
             return in_array($item['goods_id'], $existing_goods_ids);
         });
 
+        //import new wincube product
         if(count($new_goods) > 0)
         {
             $new_goods_to_insert = array_map(function ($item) use ($brands_id_map) {
@@ -1062,7 +1042,7 @@ class Gift extends MY_Controller{
                     'business_id' => (int)$brands_id_map[$item['affiliate']],
                     'wincube_id' => $item['goods_id'],
                     'wincube_image' => $item['goods_img'],
-                    'terms' => "new_item",
+                    'terms' => $item['desc'],
                     'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
                     'coupon_price' => $item['total_price'],
                     'is_active' => 1,
@@ -1075,6 +1055,7 @@ class Gift extends MY_Controller{
             // echo json_encode(['affected_rows new' => $this->db->affected_rows()]);
         }
 
+        //update existing wincube product
         if(count($existing_good_datas) > 0)
         {
             $existing_goods_to_insert = array_map(function ($item) use ($brands_id_map) {
@@ -1084,7 +1065,7 @@ class Gift extends MY_Controller{
                     'business_id' => (int)$brands_id_map[$item['affiliate']],
                     'wincube_id' => $item['goods_id'],
                     'wincube_image' => $item['goods_img'],
-                    'terms' => "ex_item",
+                    'terms' => $item['desc'],
                     'normal_price' => $item['normal_sale_price'] + $item['normal_sale_vat'],
                     'coupon_price' => $item['total_price'],
                     'is_active' => 1,
