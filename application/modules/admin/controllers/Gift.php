@@ -992,21 +992,20 @@ class Gift extends MY_Controller{
         ///////////////////////////////////
 
         //not included brand list
-        $not_included_brands = array_diff(array_column($existing_brands, 'name'), $brands);
-        
-        if(count($not_included_brands) > 0)
-        {
-            $not_included_brands_update_row = array_map(function ($name) {
-                return [
-                    'name' => $name,
-                    'is_active' => 0,
-                    'update_date' => date('Y-m-d h:i:s')
-                ];
-            }, $not_included_brands);
+        // $not_included_brands = array_diff(array_column($existing_brands, 'name'), $brands);        
+        // if(count($not_included_brands) > 0)
+        // {
+        //     $not_included_brands_update_row = array_map(function ($name) {
+        //         return [
+        //             'name' => $name,
+        //             'is_active' => 0,
+        //             'update_date' => date('Y-m-d h:i:s')
+        //         ];
+        //     }, $not_included_brands);
 
-            $this->db->db_debug = true;
-            $this->db->update_batch('tbl_businesses', $not_included_brands_update_row, 'name');
-        }
+        //     $this->db->db_debug = true;
+        //     $this->db->update_batch('tbl_businesses', $not_included_brands_update_row, 'name');
+        // }
 
         ///////////////////////////////////
 
@@ -1108,7 +1107,6 @@ class Gift extends MY_Controller{
             'existing_goods_to_insert' => count($existing_goods_to_insert),
             'not_included_goods' => count($not_included_goods),
             'new_brands' => count($new_brands),
-            'not_included_brands' => count($not_included_brands),
             'existing_brand_list' => count($existing_brand_list)
         ]);
 
