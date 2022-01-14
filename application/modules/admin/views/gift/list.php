@@ -53,12 +53,12 @@
 	                        			<!--===================================================-->
 
                                         <!-- testing for wincube  -->
-                                        <div>
+                                        <!-- <div>
                                         <p>Import Wincube data for Testing</p>
                                         <textarea id="test_wincube"></textarea>
                                         <br/>
                                         <input type="submit" class="btn_wincube_test" value="Import Wicube" />
-                                        </div>
+                                        </div> -->
                                         <!-- testing for wincube  -->
 
                                         <div class="p-20">
@@ -66,7 +66,7 @@
                                                 <div id="toolbar">
                                                     <a href="<?php echo site_url('admin/gift/add');?>" class="btn btn-default waves-effect waves-light"><i class="fa fa-plus"></i> Add</a>
                                                     <a href="<?= site_url('admin/gift/add_wincube');?>" class="btn btn-purple waves-effect waves-light m-l-5"><i class="fa fa-plus"></i> Import from WinCube</a>
-                                                    <a href="#" class="btn btn-purple waves-effect waves-light m-l-5 sync-wincube-btn"><i class="fa fa-plus"></i> Sync Wincube</a>
+                                                    <!-- <a href="#" class="btn btn-purple waves-effect waves-light m-l-5 sync-wincube-btn"><i class="fa fa-plus"></i> Sync Wincube</a> -->
                                                 </div>
 
                                                 <table id="category_table" data-toggle="table"
