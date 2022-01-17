@@ -102,6 +102,7 @@ class Gift extends MY_Controller{
                 $row['normal_price'] = $category['normal_price'];
 
                 $row['coupon_price'] = $category['coupon_price'];
+                $row['update_date'] = $category['update_date'];
 
                 $row['sale_start_date'] = $category['sale_start_date'];
 

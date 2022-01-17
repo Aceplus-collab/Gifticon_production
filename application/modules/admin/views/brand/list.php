@@ -84,6 +84,7 @@
                                                             <th  data-field="commision_rate" data-sortable="true" class="text-center"> Commision Rate </th>
                                                             <th  data-field="sequence" data-sortable="true" class="text-center"> Sequence </th>
                                                             <th  data-field="purchased" data-sortable="false"> Purchased History </th>
+                                                            <th  data-field="update_date" data-sortable="false"> Update Date </th>
 
                                                             <th  data-field="is_active" data-sortable="true" class="text-center"> Status </th>
                                                             

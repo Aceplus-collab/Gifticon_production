@@ -106,6 +106,7 @@
                                                             <th  data-field="size" data-sortable="true" class="text-center"> Size </th>
 
                                                             <th  data-field="sequence" data-sortable="true" class="text-center"> Sequence </th>
+                                                            <th  data-field="update_date" data-sortable="false"> Update Date </th>
                                                             
                                                             <th  data-field="is_active" data-sortable="true" class="text-center"> Status </th>
                                                             
